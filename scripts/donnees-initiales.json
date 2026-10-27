@@ -1,0 +1,640 @@
+{
+  "version": 1,
+  "onglets": {
+    "tips": "Tips, IA & outils collaboratifs",
+    "tipsSous": "",
+    "hub": "Hub applicatif",
+    "hubSous": "· vos outils en un clic",
+    "intranet": "Intranet",
+    "intranetSous": "· sites SharePoint Dyneff"
+  },
+  "intranet": {
+    "titre": "Welcome to France",
+    "legende": "",
+    "photo": "images/accueil-dyneff.jpg",
+    "toutLeContenu": "",
+    "sites": [
+      {
+        "id": "dyneff",
+        "nom": "Dyneff",
+        "url": "",
+        "barre": true,
+        "liste": false
+      },
+      {
+        "id": "cse",
+        "nom": "CSE",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "tips-collaboration-ia",
+        "nom": "Tips Collaboration & IA",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "it-methodes-et-digitalisation",
+        "nom": "IT - Méthodes et Digitalisation",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "ressources-humaines",
+        "nom": "Ressources Humaines",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "juridique",
+        "nom": "Juridique",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "conformite",
+        "nom": "Conformité",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "hsse",
+        "nom": "HSSE",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "marketing-communication",
+        "nom": "Marketing & Communication",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "direction-finances",
+        "nom": "Direction Finances",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "stat-atr",
+        "nom": "Stat ATR",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "adv-commerciale",
+        "nom": "ADV Commerciale",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "logistique",
+        "nom": "Logistique",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "marches-publics",
+        "nom": "Marches Publics",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "60-ans-dyneff",
+        "nom": "60 Ans Dyneff",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "activite-gaz-elec",
+        "nom": "Activité Gaz - Elec",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "asd",
+        "nom": "ASD",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "audits",
+        "nom": "Audits",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "bio-ae",
+        "nom": "Bio-AE",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "boite-a-idees",
+        "nom": "Boite à Idées",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "cee",
+        "nom": "CEE",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "credit-client",
+        "nom": "Crédit client",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "detail",
+        "nom": "Détail",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "ged-hsse-tech",
+        "nom": "GED HSSE-TECH",
+        "url": "",
+        "barre": true,
+        "liste": true
+      },
+      {
+        "id": "gestion-de-projet",
+        "nom": "Gestion de projet",
+        "url": "",
+        "barre": false,
+        "liste": true
+      }
+    ],
+    "liens": [
+      {
+        "nom": "Share",
+        "url": ""
+      },
+      {
+        "nom": "Intranet Station",
+        "url": ""
+      }
+    ],
+    "annonces": [
+      {
+        "titre": "Retrouvez toutes les actualités",
+        "auteur": "DYNFR\\ddepinoy",
+        "texte": "",
+        "url": ""
+      }
+    ],
+    "annuaire": {
+      "url": "",
+      "parametre": "nom"
+    }
+  },
+  "bibliotheque": {
+    "titre": "Guides",
+    "lienSharePoint": "",
+    "outils": [
+      {
+        "nom": "Outlook",
+        "fond": "#DCEBFA",
+        "texte": "#0B4A8B"
+      },
+      {
+        "nom": "Teams",
+        "fond": "#4F5BD5",
+        "texte": "#FFFFFF"
+      },
+      {
+        "nom": "IA",
+        "fond": "#D6F2EC",
+        "texte": "#0F6B5E"
+      },
+      {
+        "nom": "SharePoint",
+        "fond": "#D7F0F2",
+        "texte": "#0B5E66"
+      },
+      {
+        "nom": "Général",
+        "fond": "#D13438",
+        "texte": "#FFFFFF"
+      }
+    ],
+    "themes": [
+      {
+        "nom": "Guide",
+        "fond": "#C7E0F9",
+        "texte": "#0B4A8B"
+      },
+      {
+        "nom": "Réunion",
+        "fond": "#1F4E9C",
+        "texte": "#FFFFFF"
+      },
+      {
+        "nom": "Communication",
+        "fond": "#0F7B6C",
+        "texte": "#FFFFFF"
+      }
+    ],
+    "dossiers": [
+      {
+        "id": "demo",
+        "nom": "Fichier Demo",
+        "chemin": "Fichier Demo",
+        "parent": "",
+        "couleur": "#E8A400",
+        "modifie": "2026-09-03",
+        "auteur": "Ella Beyeme"
+      },
+      {
+        "id": "videos",
+        "nom": "Guides vidéo",
+        "chemin": "Guides video",
+        "parent": "",
+        "couleur": "#2B79D0",
+        "modifie": "2026-08-13",
+        "auteur": "Ella Beyeme"
+      }
+    ],
+    "fichiers": [
+      {
+        "nom": "Guide_Ranger_automatiquement_ses_mails_Copilot_Outlook_v1.pdf",
+        "dossier": "",
+        "modifie": "2026-10-22",
+        "auteur": "Ella Beyeme",
+        "outil": "Outlook",
+        "theme": "Guide"
+      },
+      {
+        "nom": "Guide_ChatGPT_Utiliser_un_projet_v1.pdf",
+        "dossier": "",
+        "modifie": "2026-10-19",
+        "auteur": "Ella Beyeme",
+        "outil": "IA",
+        "theme": "Guide"
+      },
+      {
+        "nom": "Guide_Anticiper_et_partager_les_transcriptions_de_réunion.pdf",
+        "dossier": "",
+        "modifie": "2026-10-08",
+        "auteur": "Dautremer, Remi",
+        "outil": "Teams",
+        "theme": "Réunion"
+      },
+      {
+        "nom": "Guide_ChatGPT_outils_caches.pdf",
+        "dossier": "",
+        "modifie": "2026-10-19",
+        "auteur": "Ella Beyeme",
+        "outil": "IA",
+        "theme": "Guide"
+      },
+      {
+        "nom": "Guide_SharePoint_1_Creer_un_site_v1.pdf",
+        "dossier": "",
+        "modifie": "2026-10-19",
+        "auteur": "Ella Beyeme",
+        "outil": "Général",
+        "theme": "Communication"
+      },
+      {
+        "nom": "Guide_SharePoint_2_Creer_une_arborescence_v1.pdf",
+        "dossier": "",
+        "modifie": "2026-10-19",
+        "auteur": "Ella Beyeme",
+        "outil": "Général",
+        "theme": "Communication"
+      },
+      {
+        "nom": "Guide_SharePoint_3_Deposer_et_acceder_document_v1.pdf",
+        "dossier": "",
+        "modifie": "2026-10-19",
+        "auteur": "Ella Beyeme",
+        "outil": "Général",
+        "theme": "Communication"
+      },
+      {
+        "nom": "Créer un résumé de mail avec Copilot.pdf",
+        "dossier": "",
+        "modifie": "2026-09-15",
+        "auteur": "Ella Beyeme",
+        "outil": "Outlook",
+        "theme": "Communication"
+      },
+      {
+        "nom": "Utiliser Copilot pour gérer vos emails dans Outlook.pdf",
+        "dossier": "",
+        "modifie": "2026-09-15",
+        "auteur": "Ella Beyeme",
+        "outil": "Outlook",
+        "theme": "Communication"
+      },
+      {
+        "nom": "Activer et installer Copilot sur Outlook facilement.pdf",
+        "dossier": "",
+        "modifie": "2026-09-15",
+        "auteur": "Ella Beyeme",
+        "outil": "Outlook",
+        "theme": "Communication"
+      },
+      {
+        "nom": "Guide_collaboration_Teams_conversation_v1.pdf",
+        "dossier": "",
+        "modifie": "2026-09-10",
+        "auteur": "Ella Beyeme",
+        "outil": "Teams",
+        "theme": "Réunion"
+      },
+      {
+        "nom": "Exemple_guide_video.mp4",
+        "dossier": "videos",
+        "modifie": "2026-08-13",
+        "auteur": "Ella Beyeme",
+        "outil": "Teams",
+        "theme": "Guide"
+      },
+      {
+        "nom": "Exemple_fichier_demo.xlsx",
+        "dossier": "demo",
+        "modifie": "2026-09-03",
+        "auteur": "Ella Beyeme",
+        "outil": "Général",
+        "theme": ""
+      }
+    ]
+  },
+  "hub": {
+    "docGenerale": "",
+    "sections": [
+      {
+        "id": "microsoft",
+        "title": "Microsoft 365",
+        "subtitle": "Messagerie, documents et collaboration",
+        "accent": "#2B5797",
+        "ferme": false,
+        "apps": [
+          {
+            "name": "Outlook",
+            "desc": "Messagerie et calendrier",
+            "url": "https://outlook.office.com/mail/",
+            "desktop": "mailto:",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "Teams",
+            "desc": "Conversations et réunions",
+            "url": "https://teams.microsoft.com/",
+            "desktop": "msteams:",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "Word",
+            "desc": "Traitement de texte",
+            "url": "https://www.office.com/launch/word",
+            "desktop": "ms-word:nft|u|COLLER_ICI_L_ADRESSE_DU_MODELE",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "Excel",
+            "desc": "Tableurs et calculs",
+            "url": "https://www.office.com/launch/excel",
+            "desktop": "ms-excel:nft|u|COLLER_ICI_L_ADRESSE_DU_MODELE",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "PowerPoint",
+            "desc": "Présentations",
+            "url": "https://www.office.com/launch/powerpoint",
+            "desktop": "ms-powerpoint:nft|u|COLLER_ICI_L_ADRESSE_DU_MODELE",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "OneNote",
+            "desc": "Bloc-notes partagés",
+            "url": "https://www.office.com/launch/onenote",
+            "desktop": "onenote:COLLER_ICI_L_ADRESSE_DU_BLOC_NOTES",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "OneDrive",
+            "desc": "Mes fichiers personnels",
+            "url": "https://www.office.com/launch/onedrive",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "SharePoint",
+            "desc": "Sites et documents d'équipe",
+            "url": "https://www.office.com/launch/sharepoint",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "Planner",
+            "desc": "Suivi des tâches d'équipe",
+            "url": "https://tasks.office.com/",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "Forms",
+            "desc": "Questionnaires et sondages",
+            "url": "https://forms.office.com/",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "To Do",
+            "desc": "Mes tâches personnelles",
+            "url": "https://to-do.office.com/",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "Power BI",
+            "desc": "Tableaux de bord",
+            "url": "https://app.powerbi.com/",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          }
+        ]
+      },
+      {
+        "id": "ia",
+        "title": "Assistants IA",
+        "subtitle": "Rédiger, résumer, analyser",
+        "accent": "#6B4FBB",
+        "ferme": false,
+        "apps": [
+          {
+            "name": "DynIA",
+            "desc": "IA interne Dyneff",
+            "url": "",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "Copilot",
+            "desc": "Assistant IA Microsoft 365",
+            "url": "https://m365.cloud.microsoft/chat",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "ChatGPT",
+            "desc": "Assistant IA d'OpenAI",
+            "url": "https://chatgpt.com/",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "Claude",
+            "desc": "Assistant IA d'Anthropic",
+            "url": "https://claude.ai/",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          }
+        ]
+      },
+      {
+        "id": "interne",
+        "title": "Applications internes",
+        "subtitle": "Outils métiers Dyneff",
+        "accent": "#EF3125",
+        "ferme": false,
+        "apps": [
+          {
+            "name": "Sage X3",
+            "desc": "ERP — gestion commerciale et comptable",
+            "url": "",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "Intranet",
+            "desc": "Actualités et documents internes",
+            "url": "",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "Support informatique",
+            "desc": "Déclarer un incident ou une demande",
+            "url": "",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "Application interne",
+            "desc": "Description à compléter",
+            "url": "",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          }
+        ]
+      },
+      {
+        "id": "process",
+        "title": "Applications Méthode & Process",
+        "subtitle": "Développées par Nathalie Process",
+        "accent": "#018752",
+        "ferme": false,
+        "apps": [
+          {
+            "name": "DynProjet",
+            "desc": "Suivi des projets",
+            "url": "",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "DynRecette",
+            "desc": "Recette et tests",
+            "url": "",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "DynVeille",
+            "desc": "Veille",
+            "url": "",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          }
+        ]
+      },
+      {
+        "id": "exemple-2",
+        "title": "Section exemple 2",
+        "subtitle": "Ex. : Outils partenaires et sites utiles",
+        "accent": "#C99A00",
+        "ferme": false,
+        "apps": [
+          {
+            "name": "Application D",
+            "desc": "Description à compléter",
+            "url": "",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          },
+          {
+            "name": "Application E",
+            "desc": "Description à compléter",
+            "url": "",
+            "desktop": "",
+            "logo": "",
+            "doc": ""
+          }
+        ]
+      }
+    ]
+  }
+}

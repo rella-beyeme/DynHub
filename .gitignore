@@ -1,0 +1,20 @@
+# Configuration locale (contient des secrets) et dépendances
+.env
+node_modules/
+
+# Données du hub : contenus, droits, historique, journal, corbeille
+data/
+
+# Fichiers déposés depuis la page (on ne garde dans git que les exemples)
+/documents/**
+!/documents/**/
+!/documents/**/A_LIRE.txt
+!/documents/Guides video/Exemple_guide_video.mp4
+!/documents/Fichier Demo/Exemple_fichier_demo.xlsx
+/images/envois/
+
+# Divers
+npm-debug.log*
+*.log
+Thumbs.db
+.DS_Store

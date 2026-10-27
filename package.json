@@ -1,0 +1,24 @@
+{
+  "name": "dynhub",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hub Dyneff : intranet, guides Tips IA et hub applicatif, avec connexion Microsoft (Entra ID) et droits de modification par section.",
+  "main": "serveur.js",
+  "scripts": {
+    "start": "node serveur.js",
+    "preparer": "node scripts/preparer-config.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@azure/msal-node": "^7.1.1",
+    "cookie-session": "^2.1.1",
+    "express": "^5.3.0",
+    "multer": "^2.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rella-beyeme/DynHub.git"
+  }
+}
