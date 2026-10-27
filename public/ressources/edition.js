@@ -8,6 +8,7 @@
   "use strict";
   if (typeof SESSION_HUB === "undefined") return;
   const S = SESSION_HUB;
+  const SCH = window.HUB_SCHEMAS;
   const peut = (cle) => S.cles.indexOf(cle) !== -1;
   const $ = (id) => document.getElementById(id);
 
@@ -38,7 +39,10 @@
     });
     let json = {};
     try { json = await rep.json(); } catch (e) { /* réponse vide */ }
-    if (!rep.ok) throw new Error(json.erreur || "Erreur " + rep.status);
+    if (!rep.ok) {
+      if (json.reconnecter) { if (confirm(json.erreur + "\n\nRecharger maintenant ?")) location.reload(); }
+      throw new Error(json.erreur || "Erreur " + rep.status);
+    }
     return json;
   }
   function envoyerFichier(url, donnees, progression) {
@@ -95,19 +99,38 @@
     const id = "ed-" + (++compteur);
     const bloc = el("div", { classe: "ed-champ" + (def.large ? " large" : "") + (def.type === "case" ? " case" : "") });
     let lire;
-    const lab = def.libelle ? el("label", { for: id, texte: def.libelle }) : null;
+    const lab = def.libelle ? el("label", { for: id, texte: def.libelle + (def.obligatoire ? " *" : "") }) : null;
     if (def.type === "case") {
       const i = el("input", { type: "checkbox", id });
       i.checked = !!valeur; lire = () => i.checked;
       bloc.append(i, lab);
     } else if (def.type === "zone") {
-      const t = el("textarea", { id, rows: 3, maxlength: def.max || 1500 }); t.value = valeur || ""; lire = () => t.value;
+      const t = el("textarea", { id, rows: def.lignes || 3, maxlength: def.max || 1500 }); t.value = valeur || ""; lire = () => t.value;
       bloc.append(lab, t);
-    } else if (def.type === "select") {
+    } else if (def.type === "select" || def.type === "choix" || def.type === "service" || def.type === "site" || def.type === "theme" || def.type === "icone") {
+      // Listes fermées : options [{v, l}] ou textes simples
+      let options = def.options || [];
+      if (def.type === "service") options = [{ v: "", l: "— aucun (Dyneff) —" }].concat(((typeof INTRANET !== "undefined" && INTRANET.services.elements) || []).map((x) => ({ v: x.id, l: x.nom })));
+      if (def.type === "site") options = [{ v: "", l: "— aucun —" }].concat(((typeof INTRANET !== "undefined" && INTRANET.sites.elements) || []).map((x) => ({ v: x.id, l: x.nom })));
+      if (def.type === "theme") options = [{ v: "", l: "— par défaut —" }].concat(Object.entries(SCH.THEMES).map(([k, t]) => ({ v: k, l: t.libelle })));
+      if (def.type === "icone") options = [{ v: "", l: "— aucun —" }].concat(Object.entries(SCH.ICONES).map(([k, t]) => ({ v: k, l: t.libelle })));
+      if (def.type === "select") options = [""].concat(options);
       const s = el("select", { id });
-      [""].concat(def.options).forEach((o) => s.appendChild(el("option", { value: o, texte: o || "— aucun —" })));
-      s.value = valeur || ""; lire = () => s.value;
-      bloc.append(lab, s);
+      options.forEach((o) => { const v = typeof o === "string" ? o : o.v, l = typeof o === "string" ? (o || "— aucun —") : o.l; s.appendChild(el("option", { value: v, texte: l })); });
+      s.value = valeur || ""; if (s.value !== (valeur || "") && def.type === "choix" && options[0]) s.value = options[0].v;
+      lire = () => s.value;
+      bloc.append(lab);
+      if (def.type === "theme" || def.type === "icone") {
+        // Aperçu de la couleur ou du pictogramme choisi
+        const apercu = el("span", { classe: "ed-apercu", "aria-hidden": "true" });
+        const maj = () => {
+          apercu.replaceChildren();
+          if (def.type === "theme") { const t = SCH.THEMES[s.value] || SCH.THEMES.gris; apercu.style.background = t.doux; apercu.style.borderColor = t.texte; apercu.style.color = t.texte; apercu.textContent = "Aa"; }
+          else if (s.value && window.HUB_UI) apercu.appendChild(window.HUB_UI.icone(s.value, { taille: 20 }));
+        };
+        s.addEventListener("change", maj); maj();
+        bloc.append(el("div", { classe: "ed-ligne" }, [s, apercu]));
+      } else bloc.append(s);
     } else if (def.type === "couleur") {
       const c = el("input", { type: "color", id }); c.value = /^#[0-9a-f]{6}$/i.test(valeur || "") ? valeur : (def.defaut || "#2B79D0");
       lire = () => c.value.toUpperCase();
@@ -136,7 +159,8 @@
     } else if (def.type === "liste") {
       return champListe(def, valeur);
     } else {
-      const i = el("input", { type: def.type === "date" ? "date" : "text", id, placeholder: def.placeholder || (def.type === "url" ? "https://…" : ""), maxlength: def.max || 2000 });
+      const i = el("input", { type: def.type === "date" ? "date" : "text", id, maxlength: def.max || 2000,
+        placeholder: def.placeholder || (def.type === "url" ? "https://…" : def.type === "lien" ? "https://…, #/page du hub ou mailto:…" : "") });
       i.value = valeur || ""; lire = () => i.value.trim();
       bloc.append(lab, i);
     }
@@ -219,11 +243,11 @@
   if (zone) {
     const initiales = (S.utilisateur.nom || S.utilisateur.email || "?").split(/[\s,]+/).filter(Boolean).slice(0, 2).map((m) => m[0]).join("").toUpperCase();
     const menu = el("div", { classe: "util-menu", hidden: true, role: "menu" });
-    const bouton = el("button", { type: "button", classe: "util-bouton", "aria-haspopup": "true", "aria-expanded": "false", title: S.utilisateur.email },
+    const bouton = el("button", { type: "button", classe: "util-bouton", "aria-haspopup": "true", "aria-expanded": "false", title: S.utilisateur.login || S.utilisateur.email },
       [el("span", { classe: "util-pastille", texte: initiales }), el("span", { classe: "util-nom", texte: S.utilisateur.nom || S.utilisateur.email })]);
     bouton.addEventListener("click", () => { menu.hidden = !menu.hidden; bouton.setAttribute("aria-expanded", String(!menu.hidden)); });
     document.addEventListener("click", (e) => { if (!zone.contains(e.target)) { menu.hidden = true; bouton.setAttribute("aria-expanded", "false"); } });
-    menu.appendChild(el("div", { classe: "util-entete" }, [el("strong", { texte: S.utilisateur.nom || "" }), el("span", { texte: S.utilisateur.email || "" })]));
+    menu.appendChild(el("div", { classe: "util-entete" }, [el("strong", { texte: S.utilisateur.nom || "" }), el("span", { texte: S.utilisateur.login || "" }), S.utilisateur.email ? el("span", { texte: S.utilisateur.email }) : null]));
     if (S.mode === "demo") menu.appendChild(el("div", { classe: "util-demo", texte: "Mode démonstration" }));
     if (S.cles.length) {
       const bascule = el("button", { type: "button", role: "menuitemcheckbox", classe: "util-item" });
@@ -246,54 +270,46 @@
   }
   appliquerMode();
 
-  // ---------- Onglet Intranet ----------
-  if (peut("intranet:accueil")) {
-    const h2 = $("intra-titre");
-    h2.parentNode.insertBefore(el("div", { classe: "ed-zone-titre" }, [boutonEdition("Modifier", () => editer("intranet:accueil", [
-      { cle: "titre", libelle: "Titre", type: "texte", max: 120, large: true },
-      { cle: "photo", libelle: "Photo d'accueil", type: "image", large: true },
-      { cle: "legende", libelle: "Légende sous la photo", type: "texte", max: 300, large: true },
-      { cle: "toutLeContenu", libelle: "Lien « Afficher tout le contenu du site »", type: "url", large: true },
-      { cle: "annuaire.url", libelle: "Adresse de recherche de l'annuaire", type: "url", large: true },
-      { cle: "annuaire.parametre", libelle: "Paramètre de recherche (ex. k ou nom)", type: "texte", max: 40 }
-    ]), "Modifier l'accueil")]), h2.nextSibling);
+  // ---------- Intranet : un bouton « Modifier » par module ----------
+  // Les formulaires sont construits à partir de lib/schemas.js (mêmes règles que le serveur).
+  function versDefs(champs) {
+    return champs.map((c) => {
+      const d = Object.assign({}, c);
+      if (c.type === "liste") {
+        d.champs = versDefs(c.champs);
+        d.nouveau = () => {
+          const o = {};
+          for (const x of c.champs) {
+            if (x.type === "date") o[x.cle] = window.HUB_UI ? window.HUB_UI.isoAujourdhui() : "";
+            if (x.cle === "auteur") o[x.cle] = S.utilisateur.nom || "";
+            if (x.type === "choix" && x.options[0]) o[x.cle] = x.options[0].v;
+          }
+          return o;
+        };
+      }
+      return d;
+    });
   }
-  const champsSite = [
-    { cle: "nom", libelle: "Nom du site", type: "texte", max: 80 },
-    { cle: "url", libelle: "Adresse SharePoint", type: "url", placeholder: "http://intranet…/sites/…" },
-    { cle: "barre", libelle: "Afficher dans la barre du haut", type: "case" },
-    { cle: "liste", libelle: "Afficher dans la colonne « Sites »", type: "case" }
-  ];
-  document.querySelectorAll("#intra-sites li[data-id]").forEach((li) => {
-    const cle = "intranet:site:" + li.dataset.id;
-    if (peut(cle)) li.appendChild(boutonEdition("", () => editer(cle, champsSite), "Modifier le site " + li.textContent.trim()));
-  });
-  // Sites présents seulement dans la barre du haut (ex. l'accueil « Dyneff »)
-  document.querySelectorAll("#intra-barre a[data-id]").forEach((a) => {
-    const cle = "intranet:site:" + a.dataset.id;
-    if (peut(cle) && !document.querySelector('#intra-sites li[data-id="' + a.dataset.id + '"]'))
-      a.after(boutonEdition("", () => editer(cle, champsSite), "Modifier le site " + a.textContent.trim()));
-  });
-  if (peut("intranet:sites")) {
-    const bloc = $("intra-sites").closest(".intra-bloc");
-    bloc.appendChild(el("div", { classe: "ed-pied-bloc" }, [boutonEdition("Gérer la liste des sites", () => editer("intranet:sites", [
-      { cle: "sites", type: "liste", libelleAjout: "Ajouter un site", champs: champsSite, nouveau: () => ({ nom: "", url: "", barre: false, liste: true }),
-        aide: "L'ordre de la liste est celui de la barre du haut ; la colonne « Sites » est triée par ordre alphabétique." }
-    ], { large: true }))]));
+  function editerSchema(cle) {
+    const a = SCH.analyserCle(cle);
+    if (!a || !a.schema) return;
+    let titre = a.schema.libelle;
+    if (a.service && typeof INTRANET !== "undefined") {
+      const sv = INTRANET.services.elements.find((x) => x.id === a.service);
+      if (sv) titre = sv.nom + " — " + titre;
+    }
+    const aide = a.module === "services" ? "Supprimer un espace supprime aussi sa page. Ses actualités restent visibles, sans service."
+      : a.module === "sondage" ? "Les votes sont anonymes. Changer la question ou les réponses remet les votes à zéro." : "";
+    editer(cle, versDefs(a.schema.champs), { titre, large: true, intro: aide });
   }
-  function boutonDansBloc(conteneurId, cle, defs, options) {
-    if (!peut(cle)) return;
-    const h3 = $(conteneurId).closest(".intra-bloc").querySelector("h3");
-    h3.appendChild(boutonEdition("", () => editer(cle, defs, options), "Modifier : " + h3.textContent.trim()));
-  }
-  boutonDansBloc("intra-liens", "intranet:liens", [
-    { cle: "liens", type: "liste", libelleAjout: "Ajouter un lien", champs: [{ cle: "nom", libelle: "Nom", type: "texte", max: 80 }, { cle: "url", libelle: "Adresse", type: "url" }] }
-  ]);
-  boutonDansBloc("intra-annonces", "intranet:annonces", [
-    { cle: "annonces", type: "liste", libelleAjout: "Ajouter une annonce", nouveau: () => ({ auteur: S.utilisateur.nom || "" }), champs: [
-      { cle: "titre", libelle: "Titre", type: "texte", max: 160 }, { cle: "auteur", libelle: "Auteur", type: "texte", max: 80 },
-      { cle: "texte", libelle: "Texte", type: "zone", large: true }, { cle: "url", libelle: "Lien (facultatif)", type: "url", large: true }] }
-  ], { large: true });
+  window.HUB_EDITION = {
+    peut,
+    actif: () => modeEdition,
+    bouton(cle, libelle) {
+      return boutonEdition(libelle || "Modifier", () => editerSchema(cle), "Modifier : " + ((S.sections[cle] && S.sections[cle].libelle) || cle));
+    },
+    editer: editerSchema
+  };
 
   // ---------- Onglet Tips (bibliothèque) ----------
   const actionsBib = el("span", { classe: "ed-actions-bib" });
@@ -468,8 +484,13 @@
     const entrees = [{ cle: "__admins", libelle: "Administrateurs du hub", niveau: 0, onglet: "admin" }].concat(d.catalogue);
     const valeurs = (cle) => (cle === "__admins" ? d.admins : d.acl[cle] || []);
     const boutons = {};
-    let courant = null;
+    const libelleP = (p) => p.nom || p.id || p.email;
+    const detailP = (p) => p.type === "groupe" ? "groupe AD" + (p.nom && p.nom !== p.id ? " · " + p.id : "") : [p.id, p.email].filter(Boolean).join(" · ");
 
+    // Filtre de la liste des parties (elle est longue : un module par espace service)
+    const filtre = el("input", { type: "search", classe: "dr-filtre", placeholder: "Filtrer : RH, CSE, actualités…", "aria-label": "Filtrer les parties" });
+    gauche.appendChild(filtre);
+    const lignes = [];
     function ligne(e) {
       const n = valeurs(e.cle).length;
       const b = el("button", { type: "button", classe: "dr-item niv-" + Math.min(e.niveau, 4) + (e.niveau === 0 ? " onglet" : ""), onclick: () => afficher(e) },
@@ -477,15 +498,22 @@
       boutons[e.cle] = b;
       return b;
     }
-    let ongletPrec = null;
+    let ongletPrec = null, espace = "";
     for (const e of entrees) {
       if (e.onglet !== ongletPrec && e.onglet !== "admin") gauche.appendChild(el("div", { classe: "dr-groupe", texte: d.onglets[e.onglet] }));
       ongletPrec = e.onglet;
-      gauche.appendChild(ligne(e));
+      const m = /^intranet:service:([^:]+)/.exec(e.cle);
+      if (m && e.niveau === 1) espace = e.libelle; else if (!m) espace = "";
+      const b = ligne(e);
+      lignes.push({ b, texte: (e.libelle + " " + espace + " " + (d.onglets[e.onglet] || "")).toLowerCase() });
+      gauche.appendChild(b);
     }
+    filtre.addEventListener("input", () => {
+      const q = filtre.value.trim().toLowerCase();
+      lignes.forEach((l) => { l.b.hidden = !!q && !l.texte.includes(q); });
+    });
 
     function afficher(e) {
-      courant = e;
       Object.values(boutons).forEach((b) => b.classList.remove("actif"));
       boutons[e.cle].classList.add("actif");
       droite.innerHTML = "";
@@ -493,9 +521,13 @@
       droite.appendChild(el("h4", { texte: e.libelle }));
       droite.appendChild(el("p", { classe: "ed-aide", texte:
         e.cle === "__admins" ? "Les administrateurs peuvent tout modifier et gérer les droits." :
-        e.niveau === 0 ? "Ces personnes peuvent modifier toutes les parties de l'onglet." :
-        /^tips:dossier:(?!racine)/.test(e.cle) ? "Ces personnes peuvent modifier ce dossier et ses sous-dossiers. Les personnes nommées sur l'onglet entier le peuvent aussi." :
-        "Les personnes nommées sur l'onglet entier peuvent aussi modifier cette partie." }));
+        e.niveau === 0 ? "Ces comptes et groupes peuvent modifier toutes les parties de l'onglet." :
+        /^intranet:service:[^:]+$/.test(e.cle) ? "Ces comptes et groupes peuvent modifier toute la page de l'espace et ses actualités." :
+        /^intranet:service:[^:]+:actualites$/.test(e.cle) ? "Ceux nommés sur l'espace entier, sur « Actualités (toutes) » ou sur l'onglet le peuvent aussi." :
+        /^intranet:service:/.test(e.cle) ? "Ceux nommés sur l'espace entier ou sur l'onglet le peuvent aussi." :
+        /^tips:dossier:(?!racine)/.test(e.cle) ? "Ces comptes et groupes peuvent modifier ce dossier et ses sous-dossiers. Ceux nommés sur l'onglet entier le peuvent aussi." :
+        "Ceux nommés sur l'onglet entier peuvent aussi modifier cette partie." }));
+      droite.appendChild(el("p", { classe: "ed-aide", texte: "Conseil : nommez de préférence un groupe Active Directory (ex. GG_Intranet_RH) : les arrivées et départs se gèrent alors dans l'AD." }));
       const chips = el("ul", { classe: "dr-personnes" });
       const enregistrer = el("button", { type: "button", classe: "bib-btn principal", texte: "Enregistrer", disabled: true });
       const etat = el("span", { classe: "dr-etat" });
@@ -503,20 +535,25 @@
         chips.innerHTML = "";
         if (e.cle === "__admins") d.adminsFixes.forEach((m) => chips.appendChild(el("li", { classe: "fixe", title: "Défini dans la configuration du serveur (ADMINS)" }, [el("span", { texte: m }), el("small", { texte: "permanent" })])));
         if (!liste.length && !(e.cle === "__admins" && d.adminsFixes.length)) chips.appendChild(el("li", { classe: "vide", texte: "Personne pour l'instant." }));
-        liste.forEach((p, i) => chips.appendChild(el("li", null, [
-          el("span", { texte: p.nom || p.email }), p.nom ? el("small", { texte: p.email }) : null,
-          el("button", { type: "button", "aria-label": "Retirer " + (p.nom || p.email), texte: "✕", onclick: () => { liste.splice(i, 1); modifie(); } })])));
+        liste.forEach((p, i) => chips.appendChild(el("li", { classe: p.type === "groupe" ? "groupe" : "" }, [
+          el("span", { classe: "dr-type", "aria-hidden": "true", texte: p.type === "groupe" ? "👥" : "👤" }),
+          el("span", { texte: libelleP(p) }), el("small", { texte: detailP(p) }),
+          el("button", { type: "button", "aria-label": "Retirer " + libelleP(p), texte: "✕", onclick: () => { liste.splice(i, 1); modifie(); } })])));
       }
       const modifie = () => { rendreChips(); enregistrer.disabled = false; etat.textContent = ""; };
       rendreChips();
 
-      // Recherche de personnes
-      const rech = el("input", { type: "search", placeholder: "Nom ou e-mail d'une personne…", "aria-label": "Rechercher une personne", autocomplete: "off" });
+      // Recherche dans l'annuaire Active Directory (comptes et groupes)
+      const rech = el("input", { type: "search", placeholder: "Nom, identifiant Windows ou groupe AD…", "aria-label": "Rechercher un compte ou un groupe", autocomplete: "off" });
       const resultats = el("ul", { classe: "dr-resultats", hidden: true });
       let minuteur = null;
+      const meme = (a, b) => a.type === b.type && String(a.id || a.email).toLowerCase() === String(b.id || b.email).toLowerCase();
       function ajouter(p) {
-        if (!liste.some((x) => (p.oid && x.oid === p.oid) || x.email === p.email)) liste.push(p);
+        if (!liste.some((x) => meme(x, p))) liste.push(p);
         rech.value = ""; resultats.hidden = true; modifie(); rech.focus();
+      }
+      function choix(p, texte, detail) {
+        return el("li", null, [el("button", { type: "button", onclick: () => ajouter(p) }, [el("span", { texte }), el("small", { texte: detail })])]);
       }
       rech.addEventListener("input", () => {
         clearTimeout(minuteur);
@@ -524,13 +561,18 @@
         if (q.length < 2) { resultats.hidden = true; return; }
         minuteur = setTimeout(async () => {
           resultats.innerHTML = "";
-          let trouves = [];
-          try { trouves = (await appel("GET", "/api/annuaire?q=" + encodeURIComponent(q))).personnes; }
+          let r = { personnes: [] };
+          try { r = await appel("GET", "/api/annuaire?q=" + encodeURIComponent(q)); }
           catch (err) { resultats.appendChild(el("li", { classe: "info", texte: err.message })); }
-          trouves.forEach((p) => resultats.appendChild(el("li", null, [el("button", { type: "button", onclick: () => ajouter(p) }, [el("span", { texte: p.nom }), el("small", { texte: p.email })])])));
-          if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(q) && !trouves.some((p) => p.email === q.toLowerCase()))
-            resultats.appendChild(el("li", null, [el("button", { type: "button", onclick: () => ajouter({ oid: "", email: q.toLowerCase(), nom: "" }) }, [el("span", { texte: "Ajouter " + q }), el("small", { texte: "par adresse e-mail" })])]));
-          if (!resultats.children.length) resultats.appendChild(el("li", { classe: "info", texte: "Aucun résultat. Vous pouvez saisir une adresse e-mail complète." }));
+          (r.personnes || []).forEach((p) => resultats.appendChild(choix(p, (p.type === "groupe" ? "👥 " : "👤 ") + libelleP(p), detailP(p))));
+          // Saisie manuelle : compte Windows, groupe AD ou e-mail
+          if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(q)) resultats.appendChild(choix({ type: "utilisateur", id: "", email: q.toLowerCase(), nom: "" }, "Ajouter l'adresse " + q, "comparée à l'attribut mail de l'AD"));
+          else {
+            resultats.appendChild(choix({ type: "utilisateur", id: q, nom: "" }, "👤 Ajouter le compte « " + q + " »", "identifiant Windows (DOMAINE\\login ou login)"));
+            resultats.appendChild(choix({ type: "groupe", id: q, nom: q }, "👥 Ajouter le groupe « " + q + " »", "groupe de sécurité Active Directory"));
+          }
+          if (r.avertissement) resultats.appendChild(el("li", { classe: "info", texte: r.avertissement }));
+          else if (r.source) resultats.appendChild(el("li", { classe: "info", texte: "Source : " + r.source }));
           resultats.hidden = false;
         }, 300);
       });

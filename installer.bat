@@ -21,6 +21,8 @@ echo.
 echo  Telechargement des dependances...
 call npm ci --omit=dev --no-audit --no-fund
 if errorlevel 1 goto echec_npm
+rem Empreinte des dependances : demarrer.bat reinstalle si elles changent (git pull)
+copy /y package-lock.json node_modules\.hub-dependances >nul
 
 node scripts\preparer-config.js
 if errorlevel 1 goto echec

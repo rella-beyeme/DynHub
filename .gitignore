@@ -1,5 +1,6 @@
 # Configuration locale (contient des secrets) et dépendances
 .env
+.env.v1
 node_modules/
 
 # Données du hub : contenus, droits, historique, journal, corbeille

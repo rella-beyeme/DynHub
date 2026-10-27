@@ -1,17 +1,22 @@
 # Hub Dyneff — guide d'installation (DSI)
 
-> Pour un simple essai sur une VM de test Windows, il suffit de suivre le [README](../README.md) : double-clic sur `demarrer.bat`. Ce guide concerne l'installation en production.
+> Pour un essai sur la VM de test, suivez le [README](../README.md) : double-clic sur `demarrer.bat`. Ce guide concerne l'installation en production.
 
-Le hub est une petite application **Node.js** hébergée sur un serveur interne. Il réunit trois onglets : **Intranet**, **Tips, IA & outils collaboratifs** (bibliothèque de guides PDF et vidéos) et **Hub applicatif**.
+Le hub est une petite application **Node.js** hébergée sur un serveur Windows interne. Il réunit :
+- l'**Intranet** : accueil modulaire, actualités, agenda, annuaire, 12 espaces services ;
+- le **Hub applicatif** ;
+- **Tips, IA & outils collaboratifs**, une bibliothèque de guides PDF et vidéos.
 
-- **Connexion** : chaque personne se connecte avec son compte Microsoft Dyneff (Entra ID), en SSO.
-- **Modification** : chaque partie du hub (un site de l'intranet, un dossier de guides, une section d'applications…) peut être confiée à des personnes précises.
-- **Contrôle des droits** : il est fait **par le serveur**, à chaque modification.
+**Connexion et droits**
+- **Connexion** : SSO **Active Directory** (Negotiate : Kerberos, sinon NTLM). Le poste transmet la session Windows, sans saisie.
+- **Droits** : chaque module, espace service, dossier Tips ou section du hub peut être confié à des comptes ou à des **groupes AD**. Les groupes imbriqués sont pris en compte.
+- **Contrôle** : le serveur vérifie les droits à chaque modification.
 
 ```
-Navigateur ──HTTPS──> Proxy (IIS / nginx) ──> Node.js (port 3000) ──> data/ documents/ images/
-                                      └──> login.microsoftonline.com (connexion)
-                                      └──> graph.microsoft.com (recherche de personnes, admins)
+Poste (session DYNFR) ──Negotiate──> Node.js sur Windows (membre du domaine) ──> data/ documents/ images/
+                                           │  SSPI : jeton Windows + groupes de sécurité
+                                           └──LDAP(S) facultatif──> contrôleur de domaine
+                                              (recherche dans l'écran des droits, mode formulaire)
 ```
 
 ---
@@ -20,94 +25,88 @@ Navigateur ──HTTPS──> Proxy (IIS / nginx) ──> Node.js (port 3000) �
 
 | Élément | Détail |
 |---|---|
-| Serveur | Windows Server ou Linux, interne |
-| Node.js | Version 20, 22 ou 24 LTS (`node --version`) |
-| Nom DNS | Par exemple `hub.dyneff.fr` |
-| Certificat HTTPS | Certificat interne ou public, porté par le proxy |
-| Accès sortant | `login.microsoftonline.com` et `graph.microsoft.com` (HTTPS 443) |
+| Serveur | **Windows Server membre du domaine DYNFR** (exigé par le SSO, qui s'appuie sur SSPI) |
+| Node.js | Version 20, 22 ou 24 LTS, en **x64** (`node --version`) |
+| Nom DNS | Nom court ou FQDN interne, par exemple `hub` / `hub.dynfr.local` |
+| Navigateurs | Adresse du hub dans la zone **Intranet local** (GPO, voir § 4) |
+| LDAP (facultatif) | Compte de service en lecture seule, LDAPS 636 vers un contrôleur de domaine |
 | Disque | Selon les vidéos déposées (prévoir plusieurs Go) |
 
-## 2. Enregistrer l'application dans Entra ID (≈ 15 min)
+> **Pas de serveur Windows dans le domaine ?** Utilisez `MODE_CONNEXION=ldap`. Les utilisateurs saisissent alors leur identifiant et leur mot de passe Windows, vérifiés sur l'AD en LDAPS. Ce n'est plus du SSO silencieux, mais les droits par groupes fonctionnent de la même façon.
 
-Portail **entra.microsoft.com**, rôle *Administrateur d'applications* ou supérieur.
+## 2. Installer
 
-1. **Identité → Applications → Inscriptions d'applications → Nouvelle inscription**
-   - Nom : `Hub Dyneff`
-   - Types de comptes : **Comptes dans cet annuaire d'organisation uniquement**
-   - URI de redirection : plateforme **Web**, `https://hub.dyneff.fr/auth/retour`
-2. Sur la page **Vue d'ensemble**, notez :
-   - l'**ID d'application (client)** → `ENTRA_CLIENT_ID` ;
-   - l'**ID de l'annuaire (locataire)** → `ENTRA_TENANT_ID`.
-3. **Certificats et secrets → Nouveau secret client** : durée de 24 mois, puis copiez la **Valeur** → `ENTRA_CLIENT_SECRET`.
-   ⚠️ Notez la date d'expiration dans votre agenda. À l'échéance, la connexion cessera de fonctionner.
-4. **Autorisations d'API → Ajouter une autorisation → Microsoft Graph** :
-   - *Délégué* : `openid`, `profile`, `email` (avec `User.Read`, déjà présent) ;
-   - *Application* : `User.Read.All`. Elle sert uniquement à la recherche de personnes dans l'écran « Gérer les droits ».
-   - Puis **Accorder un consentement d'administrateur pour Dyneff**.
-5. *(Facultatif)* Pour réserver le hub à certaines personnes :
-   - allez dans **Applications d'entreprise → Hub Dyneff → Propriétés** et réglez **Affectation requise : Oui** ;
-   - affectez ensuite les groupes concernés dans **Utilisateurs et groupes**.
-
-> Sans l'autorisation `User.Read.All`, tout fonctionne quand même. Les administrateurs ajoutent alors les modificateurs en tapant leur adresse e-mail complète.
-
-## 3. Installer
-
-```bash
-# 1. Récupérer le dépôt sur le serveur, puis dans ce dossier :
-git clone https://github.com/rella-beyeme/DynHub.git && cd DynHub
+```bat
+git clone https://github.com/rella-beyeme/DynHub.git D:\DynHub
+cd /d D:\DynHub
 npm ci --omit=dev
-
-# 2. Créer la configuration
-cp config/production.env.modele .env      # Windows : copy config\production.env.modele .env
-
-# 3. Générer la clé de session et la coller dans SECRET_SESSION
+copy config\production.env.modele .env
 node -e "console.log(require('crypto').randomBytes(48).toString('base64'))"
 ```
 
-Renseignez le fichier `.env` (tout est commenté dedans) :
+Collez la valeur générée dans `SECRET_SESSION`, puis complétez le `.env` (tout y est commenté) :
 
 | Variable | Valeur |
 |---|---|
-| `URL_PUBLIQUE` | `https://hub.dyneff.fr` (identique à l'URI de redirection, sans `/auth/retour`) |
-| `ENTRA_TENANT_ID`, `ENTRA_CLIENT_ID`, `ENTRA_CLIENT_SECRET` | Valeurs de l'étape 2 |
-| `ADMINS` | E-mails des administrateurs permanents, par exemple `cellulemp@dyneff.fr` |
-| `TAILLE_MAX_MO` | Taille maximale d'un fichier déposé (500 par défaut) |
-| `DERRIERE_PROXY` | `oui` si un proxy porte le HTTPS (cas recommandé) |
+| `URL_PUBLIQUE` | `http://hub.dynfr.local` ou `https://…`, telle que tapée dans le navigateur |
+| `MODE_CONNEXION` | `windows` |
+| `DOMAINES_AUTORISES` | `DYNFR` (refuse les comptes locaux et les autres domaines) |
+| `FORCER_NTLM` | `non` en production (Kerberos, voir § 3), `oui` pour un test rapide |
+| `ADMINS` | `groupe:GG_Hub_Admins` et/ou des comptes `DYNFR\login` |
+| `LDAP_*` | Facultatif : recherche de personnes et de groupes dans l'écran des droits |
 
-Lancez le serveur avec `npm start`, puis vérifiez `http://localhost:3000/sante` : la réponse doit être `{"ok":true}`. Au premier démarrage, le contenu actuel du hub est créé dans `data/hub.json`.
+Lancez `npm start`, puis vérifiez `http://localhost:3000/sante` : la réponse doit être `{"ok":true}`.
 
-**Documents existants** : copiez les PDF, vidéos et fichiers de démo dans `documents/`, en respectant les sous-dossiers `Fichier Demo/` et `Guides video/`. Les noms de fichiers doivent rester identiques.
+**Mise à jour depuis la version précédente (connexion Microsoft)** : au premier démarrage, l'intranet et les droits sont convertis automatiquement, et l'ancienne version est archivée dans `data/historique/`.
+- `MODE_CONNEXION=entra` n'existe plus. Le serveur refuse de démarrer tant que ce n'est pas corrigé.
+- Les droits nommés par e-mail continuent de fonctionner, si l'attribut `mail` est renseigné dans l'AD.
 
-## 4. HTTPS (proxy inverse)
+## 3. Kerberos ou NTLM
 
-Node écoute en HTTP local. Le proxy porte le certificat et transmet les requêtes.
+Le hub accepte **Negotiate** : le navigateur essaie Kerberos, puis NTLM.
 
-**IIS** (modules *URL Rewrite* et *Application Request Routing*) :
-- Créez une règle de proxy inverse vers `http://localhost:3000`.
-- Activez *Preserve host header*.
-- Pour les vidéos, augmentez la limite d'envoi dans `web.config` : `<requestLimits maxAllowedContentLength="524288000" />` (500 Mo).
+| | Kerberos (recommandé) | NTLM (`FORCER_NTLM=oui`) |
+|---|---|---|
+| Configuration | Un SPN `HTTP/<nom>` sur le compte qui exécute Node | Aucune |
+| Proxy inverse | Possible | **Non** : NTLM est lié à la connexion TCP et ne traverse pas un proxy |
+| Sécurité | Meilleure | Acceptable sur un réseau interne |
 
-**nginx** :
+**SPN** :
+- **Le service tourne en `LocalSystem` / `NetworkService`** et les utilisateurs tapent le **nom de la machine** : le SPN `HOST/` du compte ordinateur suffit, il n'y a rien à faire.
+- **Les utilisateurs passent par un alias DNS** (`hub.dynfr.local`) : déclarez le SPN sur le compte ordinateur :
+  ```
+  setspn -S HTTP/hub.dynfr.local DYNFR\SRV-HUB$
+  setspn -S HTTP/hub DYNFR\SRV-HUB$
+  ```
+  Utilisez un enregistrement **A**, pas CNAME, pour éviter les surprises côté navigateur.
+- **Le service tourne sous un compte de service** (gMSA conseillé) : déclarez les SPN sur ce compte.
 
-```nginx
-server {
-  listen 443 ssl;
-  server_name hub.dyneff.fr;
-  ssl_certificate     /etc/ssl/hub.crt;
-  ssl_certificate_key /etc/ssl/hub.key;
-  client_max_body_size 500m;            # = TAILLE_MAX_MO
-  location / {
-    proxy_pass http://127.0.0.1:3000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Proto https;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-  }
-}
-```
+**Vérifier** : sur un poste, ouvrez le hub, puis lancez `klist` dans une invite de commandes. Un ticket `HTTP/hub.dynfr.local` doit apparaître.
 
-## 5. Faire tourner le hub en service
+## 4. Navigateurs (GPO)
 
-**Windows**, avec [NSSM](https://nssm.cc) :
+Le SSO n'est silencieux que si l'adresse du hub est dans la zone **Intranet local** :
+- **GPO « Liste des attributions de sites aux zones »** : ajoutez `http://hub.dynfr.local` (ou `https://…`) avec la valeur **1** (Intranet). Edge et Chrome s'appuient sur ce réglage.
+- **Si besoin, la stratégie Edge/Chrome `AuthServerAllowlist`** : `hub.dynfr.local,hub`.
+- **Les noms courts** (`http://hub:3000`) sont en principe déjà considérés comme intranet.
+
+**Firefox** :
+- `network.negotiate-auth.trusted-uris = hub.dynfr.local` ;
+- `network.automatic-ntlm-auth.trusted-uris = hub.dynfr.local`.
+
+## 5. HTTPS
+
+Node écoute en HTTP. **Deux choix** :
+1. **HTTP interne direct** (le plus simple avec le SSO). Les mots de passe ne circulent pas : Kerberos et NTLM sont des échanges de jetons. Mais les contenus ne sont pas chiffrés.
+2. **Proxy inverse HTTPS (IIS ARR, nginx) avec Kerberos uniquement** (`FORCER_NTLM=non`). Points à respecter :
+   - le proxy doit transmettre l'en-tête `Authorization` sans le traiter : l'authentification Windows **désactivée** sur le site IIS ;
+   - le SPN porte sur le nom public ;
+   - mettez `DERRIERE_PROXY=oui` ;
+   - pour les vidéos, augmentez la taille d'envoi (`maxAllowedContentLength="524288000"` sous IIS, `client_max_body_size 500m` sous nginx).
+
+## 6. Faire tourner le hub en service
+
+Avec [NSSM](https://nssm.cc) :
 
 ```bat
 nssm install HubDyneff "C:\Program Files\nodejs\node.exe" serveur.js
@@ -117,81 +116,80 @@ nssm set HubDyneff AppStderr D:\DynHub\data\service.log
 nssm start HubDyneff
 ```
 
-**Linux**, avec systemd (`/etc/systemd/system/hub-dyneff.service`) :
-
-```ini
-[Unit]
-Description=Hub Dyneff
-After=network.target
-[Service]
-WorkingDirectory=/opt/DynHub
-ExecStart=/usr/bin/node serveur.js
-Restart=always
-User=hub
-[Install]
-WantedBy=multi-user.target
-```
-
-Activez-le avec `systemctl enable --now hub-dyneff`.
-
-## 6. Sauvegardes et restauration
-
-Sauvegardez chaque jour ces trois dossiers :
-
-| Dossier | Contenu |
-|---|---|
-| `data/` | `hub.json` (contenus), `droits.json` (droits), `historique/` (300 dernières versions), `journal.log` (qui a fait quoi), `corbeille/` (fichiers retirés) |
-| `documents/` | Guides PDF, vidéos, fichiers de démo |
-| `images/` | Photo d'accueil, logos envoyés |
-
-**Restaurer une version** :
-1. Arrêtez le service.
-2. Copiez le fichier voulu de `data/historique/` à la place de `data/hub.json`, ou de `data/droits.json` pour les droits.
-3. Redémarrez le service.
-
-Les fichiers retirés depuis la page ne sont jamais effacés. Ils sont déplacés dans `data/corbeille/`. Videz ce dossier de temps en temps.
+Par défaut, le service tourne en `LocalSystem` (voir § 3 pour le SPN). Pour un compte dédié : `nssm set HubDyneff ObjectName DYNFR\svc-hub <motdepasse>`. Ce compte doit pouvoir écrire dans `data\`, `documents\` et `images\`.
 
 ## 7. Comment fonctionnent les droits
 
-- **Les administrateurs** (liste `ADMINS` du `.env`, plus ceux nommés dans la page) peuvent tout modifier. Ce sont aussi eux qui nomment les modificateurs, depuis le menu à leur nom : **Gérer les droits de modification**.
-- **Un modificateur peut être nommé sur** :
-  - un onglet entier (Intranet, Tips, Hub) ;
-  - ou une seule partie : un site de l'intranet (Dyneff, CSE…), les liens, les annonces, l'accueil, un dossier de guides, une section d'applications, les réglages d'un onglet.
-- **Héritage** : une personne nommée sur un onglet peut modifier toutes ses parties. Une personne nommée sur un dossier de guides peut aussi modifier ses sous-dossiers.
-- **Ce qu'on voit à l'écran** : une personne ne voit les boutons « Modifier » que pour ses parties, après avoir cliqué sur « Modifier » en haut de la page. Le serveur revérifie chaque modification. Une tentative non autorisée est refusée (erreur 403) et n'est jamais enregistrée.
+**Qui**
+- **Administrateurs** : liste `ADMINS` du `.env`, plus ceux nommés dans la page. Ils modifient tout et attribuent les droits (menu à leur nom → **Gérer les droits de modification**).
+- **Modificateurs** : un compte `DYNFR\login`, un **groupe AD** (nom du groupe, ex. `GG_Intranet_RH`) ou une adresse e-mail.
 
-## 8. Sécurité, en bref
+**Sur quoi**
+- **Intranet** : tout l'intranet, un module de l'accueil (À la une, actualités, agenda, sécurité, CSE, sondage…), un **espace service** entier ou un seul de ses modules (bandeau, raccourcis, FAQ, documents, contacts…).
+- **Tips** : toute la partie, ou un dossier et ses sous-dossiers.
+- **Hub** : tout le hub, ou une section d'applications.
 
-- **Connexion** : flux OpenID Connect avec code d'autorisation et PKCE. Seuls les comptes du tenant Dyneff sont acceptés.
-- **Session** : cookie signé (`HttpOnly`, `SameSite=Lax`, `Secure` en HTTPS) qui ne contient que le nom, l'e-mail et l'identifiant Entra. Aucun jeton n'est stocké.
-- **Requêtes de modification** : elles exigent un en-tête dédié et la même origine (protection CSRF).
-- **Contrôle des contenus** : adresses limitées à `http(s)`, liens « Bureau » limités à `ms-*`, `msteams`, `onenote` et `mailto` (plus `SCHEMAS_BUREAU`), longueurs bornées.
-- **Fichiers déposés** : formats limités (PDF, vidéos, images, Office, CSV, TXT, ZIP ; ni HTML ni SVG), noms nettoyés, aucune sortie possible du dossier `documents/`.
-- **En-têtes HTTP** : CSP, `X-Content-Type-Options`, `X-Frame-Options` et HSTS en HTTPS.
-- **Changement de la clé de session** : modifier `SECRET_SESSION` déconnecte tout le monde.
+**Héritage** : un droit sur un parent donne tous ses enfants. Exception utile : le responsable d'un espace service peut publier une actualité **pour son service**, sans pouvoir toucher aux autres.
 
-## 9. Mode démonstration (tests sans Entra)
+**Groupes**
+- En SSO, ce sont les groupes de sécurité du jeton Windows, imbrications comprises.
+- En mode `ldap`, la règle `LDAP_MATCHING_RULE_IN_CHAIN` donne le même résultat.
+- Les groupes sont gardés `GROUPES_DUREE_HEURES` (4 h). Ensuite, ils sont relus par le compte de service LDAP, ou une reconnexion silencieuse est demandée.
 
-Le mode démonstration sert à essayer le hub et ses droits avant l'enregistrement dans Entra ID. Mettez dans le `.env` :
+**Contrôle** : chaque enregistrement est revérifié par le serveur. Une tentative non autorisée renvoie une erreur 403 et n'est jamais enregistrée.
 
-```
-NODE_ENV=development
-MODE_CONNEXION=demo
-COMPTES_DEMO="admin@dyneff.fr:Admin Hub,cse@dyneff.fr:Claire CSE,lecteur@dyneff.fr:Léa Lectrice"
-ADMINS=admin@dyneff.fr
-```
+## 8. Sauvegardes et restauration
 
-La page de connexion propose alors de choisir un de ces comptes. Ce mode est **refusé au démarrage si `NODE_ENV=production`**.
+| Dossier | Contenu |
+|---|---|
+| `data/` | `hub.json` (contenus), `droits.json`, `sondage.json`, `historique/` (300 dernières versions), `journal.log` (qui a fait quoi), `corbeille/` |
+| `documents/` | Guides PDF, vidéos, fichiers de démo |
+| `images/` | Photos et images envoyées depuis la page |
+
+**Restaurer une version** :
+1. Arrêtez le service.
+2. Copiez le fichier voulu de `data/historique/` à la place de `data/hub.json` (ou de `droits.json`).
+3. Redémarrez le service.
+
+## 9. Sécurité, en bref
+
+**Connexion et session**
+- **Connexion** : SSPI (Negotiate). Le mot de passe ne transite jamais par le hub. En mode `ldap`, il est vérifié par une liaison LDAPS puis oublié, et les tentatives sont limitées (10 échecs par 15 minutes).
+- **Comptes acceptés** : seuls ceux des `DOMAINES_AUTORISES`. Les comptes désactivés sont refusés en mode `ldap`.
+- **Session** : cookie signé (`HttpOnly`, `SameSite=Lax`, `Secure` en HTTPS). Il contient seulement l'identifiant, le nom et l'e-mail. Les groupes sont gardés côté serveur.
+
+**Requêtes et contenus**
+- **Modifications** : elles exigent un en-tête dédié et la même origine (protection CSRF).
+- **Contenus** :
+  - formulaires générés et validés à partir d'une même description des modules (`lib/schemas.js`) ;
+  - liens limités à `https`, aux pages du hub, `mailto:` et `tel:` ;
+  - aucune page HTML libre.
+- **Fichiers** :
+  - formats limités (ni HTML ni SVG) et noms nettoyés ;
+  - pas de sortie possible du dossier `documents/`.
+
+**Divers**
+- **Sondage** : anonyme. Le serveur garde seulement une empreinte (HMAC) de chaque votant.
+- **En-têtes HTTP** : CSP, `X-Content-Type-Options` et `X-Frame-Options`.
+
+## 10. Dépannage
+
+| Symptôme | Cause probable |
+|---|---|
+| Fenêtre d'identification dans le navigateur | Adresse hors zone Intranet local (§ 4), ou SPN manquant / en double (`setspn -Q HTTP/hub.dynfr.local`) |
+| « Connexion Windows impossible » | Poste hors domaine ou compte local. Si `LDAP_URL` est renseigné, un lien vers le formulaire de secours est proposé |
+| « Accès refusé : compte … » | Domaine absent de `DOMAINES_AUTORISES` |
+| Une personne d'un groupe n'a pas ses droits | Groupe de distribution (et non de sécurité), ou appartenance récente : elle doit fermer puis rouvrir sa session Windows (nouveau jeton) |
+| Le serveur refuse de démarrer en mode `windows` | Serveur non Windows ou module `node-expose-sspi` absent : relancez `npm ci` |
 
 ---
 
 ## Pour les modificateurs (à transmettre)
 
-1. **Passer en modification** : connectez-vous, puis cliquez sur **Modifier** en haut à droite. Des boutons jaunes apparaissent sur les parties que vous pouvez modifier.
-2. **Modifier une partie** : cliquez sur un bouton jaune, faites vos changements, puis cliquez sur **Enregistrer**. La page se recharge avec la nouvelle version.
-3. **Gérer les documents (onglet Tips)** :
-   - **Ajouter un document** envoie un fichier dans le dossier ouvert.
+1. **Passer en modification** : cliquez sur **Modifier** en haut à droite. Un bouton apparaît sur chaque module que vous pouvez modifier. Les emplacements vides deviennent visibles.
+2. **Modifier un module** : cliquez sur son bouton, faites vos changements, puis cliquez sur **Enregistrer**.
+3. **Actualités** : le responsable d'un espace service publie depuis le module « Actualités » de son espace.
+4. **Tips** :
+   - **Ajouter un document** envoie un fichier dans le dossier ouvert ;
    - **Nouveau dossier** crée un sous-dossier.
-   - **Modifier ce dossier** permet de changer les étiquettes, réordonner ou retirer des fichiers.
-4. **Si un message signale qu'une autre personne a modifié la même partie**, rechargez la page et refaites votre changement.
 5. **Pour revenir en lecture**, cliquez sur **Terminer**.

@@ -1,71 +1,98 @@
-# DynHub — Hub Dyneff
+# DynHub — Intranet & Hub Dyneff
 
-Page d'accueil interne de Dyneff, en trois onglets :
+Page d'accueil interne de Dyneff, en trois parties :
 
-| Onglet | Contenu |
+| Partie | Contenu |
 |---|---|
-| **Intranet** | Accès aux sites SharePoint internes, photo d'accueil, liens, annonces, annuaire |
+| **Intranet** (nouveau visuel) | Accueil (alerte, À la une, accès rapides, mot de la direction, actualités, agenda, sécurité, bienvenue, espaces services, offres, campagne, CSE, sondage, Dyneff en bref, sites), pages Actualités, Agenda, Annuaire, Sites, et **12 espaces services** (RH, Marketing & Communication, QHSE, DSI, CSE…) |
+| **Hub applicatif** | Microsoft 365 (boutons En ligne / Bureau), assistants IA (DynIA, Copilot, ChatGPT, Claude), applications internes, Méthode & Process |
 | **Tips, IA & outils collaboratifs** | Bibliothèque de guides : PDF, vidéos, fichiers de démo, avec aperçu dans la page |
-| **Hub applicatif** | Applications Microsoft 365, assistants IA, applications internes et Méthode & Process |
 
-- **Connexion** : avec les comptes Microsoft (Entra ID), ou des comptes de test en mode démonstration.
-- **Modification** : chaque partie peut être confiée à des personnes précises (un site de l'intranet, un dossier de guides, une section d'applications…). Le contrôle est fait par le serveur.
+- **Connexion** : SSO interne **Active Directory** — la session Windows suffit, sans mot de passe à saisir.
+- **Modification** : chaque module de l'intranet a son bouton « Modifier ». Chaque partie peut être confiée à des **comptes** ou à des **groupes AD** (par exemple `GG_Intranet_RH` sur l'espace RH). Le serveur contrôle chaque modification.
 
 ---
 
 ## Lancer le hub sur la VM de test (Windows)
 
 **Prérequis**
-- **Node.js 20 ou plus récent** (version LTS conseillée), à télécharger sur <https://nodejs.org>.
-- **Un accès à internet** au premier lancement, pour télécharger les dépendances.
+- **VM membre du domaine** `DYNFR`, et session ouverte avec un compte du domaine.
+- **Node.js 20 ou plus récent** (LTS), depuis <https://nodejs.org>.
+- **Un accès à internet** au premier lancement et après chaque mise à jour, pour télécharger les dépendances.
 
-**Récupérer le dépôt**
+**Première installation**
 
 ```bat
+cd C:\Users\rella-beyeme\Documents
 git clone https://github.com/rella-beyeme/DynHub.git
-cd DynHub
 ```
 
-**Lancer le hub**
-- **Double-cliquez sur `demarrer.bat`.** Au premier lancement, le script :
-  - installe les dépendances (`npm ci`) ;
-  - crée le fichier de configuration `.env`, en mode démonstration, avec une clé de session aléatoire ;
-  - démarre le serveur et ouvre le navigateur sur <http://localhost:3000>.
-- **Pour arrêter le hub**, fermez la fenêtre noire du serveur.
+Double-cliquez ensuite sur **`demarrer.bat`**. Le script :
+1. installe les dépendances (`npm ci`), et les réinstalle automatiquement quand une mise à jour les change ;
+2. crée le fichier `.env` (connexion Windows, clé de session aléatoire). Un ancien `.env` est sauvegardé en `.env.v1`, et ses réglages sont repris ;
+3. démarre le serveur et ouvre <http://localhost:3000>.
 
-### Comptes de test (mode démonstration)
+Vous êtes reconnu automatiquement. **Pour arrêter le hub**, fermez la fenêtre noire.
 
-La page de connexion propose de choisir un compte, sans mot de passe :
+**Mise à jour** : `git pull`, puis `demarrer.bat`. Les contenus déjà saisis sont conservés. Ceux de la version précédente sont repris dans le nouvel intranet (sites, liens, annonces → actualités), et une copie est archivée dans `data\historique\`.
 
-| Compte | Droits au départ |
+### Qui est administrateur ?
+
+Le `.env` contient `ADMINS="DYNFR\rella-beyeme, cellulemp@dyneff.fr"`. Pour vérifier votre identifiant Windows, tapez `whoami` dans une invite de commandes. S'il est différent, corrigez `ADMINS`, puis relancez.
+
+On peut aussi désigner un groupe AD : `ADMINS="groupe:GG_Hub_Admins"`.
+
+### Donner des droits
+
+1. Cliquez sur votre nom, puis **Gérer les droits de modification**.
+2. Choisissez une partie : tout l'intranet, un module de l'accueil, un espace service entier ou un seul de ses modules, un dossier Tips, une section du hub…
+3. Ajoutez un **compte** (`DYNFR\login`), un **groupe AD** ou un e-mail. La recherche dans l'annuaire est disponible quand un compte de service LDAP est configuré. Sinon, tapez le nom exact.
+
+Les **groupes AD** sont recommandés : la DSI gère les membres dans l'AD, sans toucher au hub. Les groupes imbriqués sont pris en compte. Un changement de groupe est visible à la prochaine connexion, ou au plus tard après `GROUPES_DUREE_HEURES` (4 h par défaut).
+
+Ensuite, la personne clique sur **Modifier** en haut de la page. Elle ne voit que les boutons des parties qui lui sont confiées.
+
+### Si le SSO ne fonctionne pas
+
+| Symptôme | Solution |
 |---|---|
-| Cellule MP (administrateur) — `cellulemp@dyneff.fr` | Tout modifier, gérer les droits |
-| Responsable CSE (test) | Aucun : à nommer, par exemple sur le site « CSE » |
-| Responsable Tips (test) | Aucun : à nommer, par exemple sur l'onglet Tips |
-| Lecteur simple (test) | Lecture seule |
+| Le navigateur demande un identifiant / mot de passe | Ajoutez l'adresse du hub à la zone **Intranet local** (Options Internet → Sécurité → Intranet local → Sites). `localhost` et les noms courts (`http://DYNMPL063:3000`) y sont en principe déjà |
+| Page « Connexion Windows impossible » | La VM n'est pas dans le domaine, ou la session est un compte local. Vérifiez avec `whoami` |
+| « Accès refusé : compte … » | Le domaine n'est pas dans `DOMAINES_AUTORISES` |
+| Le serveur refuse de démarrer (module `node-expose-sspi`) | Relancez `installer.bat`. Sinon, passez temporairement en `MODE_CONNEXION=ldap` (formulaire Windows) ou `demo` |
 
-**Pour essayer les droits**
-1. Connectez-vous en administrateur.
-2. Ouvrez le menu à votre nom, puis **Gérer les droits de modification**, et nommez un compte de test sur une partie.
-3. Déconnectez-vous, puis reconnectez-vous avec ce compte.
-4. Cliquez sur **Modifier** en haut à droite : seuls les boutons de ses parties apparaissent.
+### Modes de connexion (`MODE_CONNEXION` dans `.env`)
 
-### Réglages utiles (fichier `.env`)
+| Mode | Usage |
+|---|---|
+| `windows` *(défaut)* | SSO Active Directory (Negotiate / NTLM / Kerberos). Le serveur doit être un Windows membre du domaine |
+| `ldap` | Formulaire identifiant / mot de passe Windows, vérifié sur le contrôleur de domaine. Renseignez `LDAP_URL` (ex. `ldaps://dc01.dynfr.local:636`) |
+| `demo` | Comptes de test sans AD, pour essayer les droits. Voir ci-dessous |
+
+### Comptes de test (`MODE_CONNEXION=demo`)
+
+| Compte | Groupe AD simulé | Pour essayer |
+|---|---|---|
+| `DYNFR\rella-beyeme` | — | Administrateur |
+| `DYNFR\rh.test` | `GG_Intranet_RH` | Donnez le droit « Espace Ressources humaines » au groupe `GG_Intranet_RH` |
+| `DYNFR\cse.test` | `GG_Intranet_CSE` | Espace CSE |
+| `DYNFR\tips.test` | `GG_Tips_IA` | Partie Tips |
+| `DYNFR\lecteur.test` | — | Lecture seule |
+
+### Réglages utiles (`.env`)
 
 | Besoin | Réglage |
 |---|---|
-| Ouvrir le hub depuis un autre poste que la VM | `URL_PUBLIQUE=http://NOM-DE-LA-VM:3000`, puis autoriser le port 3000 dans le pare-feu Windows de la VM |
+| Ouvrir le hub depuis un autre poste | `URL_PUBLIQUE=http://DYNMPL063:3000`, puis ouvrez le port 3000 dans le pare-feu de la VM |
 | Changer de port | `PORT=8080` **et** `URL_PUBLIQUE=http://localhost:8080` |
-| Passer aux vrais comptes Microsoft | `MODE_CONNEXION=entra` et les trois valeurs `ENTRA_*` (voir [docs/INSTALLATION-DSI.md](docs/INSTALLATION-DSI.md), étape 2) |
+| Recherche de personnes et de groupes dans l'écran des droits | `LDAP_URL`, `LDAP_COMPTE_SERVICE`, `LDAP_MOT_DE_PASSE_SERVICE` (compte en lecture seule) |
 
-Redémarrez `demarrer.bat` après chaque modification du `.env`.
-
-> **Microsoft refuse le HTTP**, sauf pour `localhost`. Avec `MODE_CONNEXION=entra`, la VM doit donc être ouverte en `http://localhost:3000`, depuis la VM elle-même. Sinon, il faut la placer derrière un HTTPS : voir le guide DSI.
+Relancez `demarrer.bat` après chaque modification du `.env`.
 
 ### Remettre la VM à zéro
 
 1. Arrêtez le serveur.
-2. Supprimez le dossier `data\` (contenus, droits, historique) et les fichiers déposés dans `documents\`.
+2. Supprimez le dossier `data\`.
 3. Relancez `demarrer.bat` : le contenu de départ est recréé à partir de `scripts/donnees-initiales.json`.
 
 ---
@@ -74,17 +101,17 @@ Redémarrez `demarrer.bat` après chaque modification du `.env`.
 
 ```
 demarrer.bat / installer.bat   Lancement en double-clic (Windows)
-serveur.js                     Serveur web (Express)
-lib/                           Connexion Microsoft, droits, validation, stockage
-public/                        Page du hub et mode édition
-scripts/                       Contenu de départ, création de la configuration
-config/vm-test.env.modele      Modèle de configuration de la VM de test
-config/production.env.modele   Modèle de configuration de production (commenté)
-documents/                     Guides déposés (seuls les exemples sont suivis par git)
-images/                        Photo d'accueil, images envoyées depuis la page
-modeles-office/                Modèles vierges Word / Excel / PowerPoint (boutons « Bureau »)
-docs/INSTALLATION-DSI.md       Installation en production : Entra ID, HTTPS, service, sauvegardes
-data/                          (créé au démarrage, hors git) contenus, droits, historique, journal
+serveur.js                     Serveur web (Express) et API
+lib/annuaire.js                Active Directory : SSO Windows (SSPI), LDAP, groupes
+lib/auth.js                    Pages de connexion, session
+lib/droits.js                  Catalogue des droits (par module), héritage
+lib/schemas.js                 Description des modules (formulaires + validation)
+lib/intranet-donnees.js        Contenu de départ de l'intranet, reprise de la v1
+lib/contenus.js, stockage.js   Validation et enregistrement (historique, journal)
+public/hub-applicatif.html     Page unique (intranet, hub, tips)
+public/ressources/             intranet.js, hub.js, tips.js, edition.js, styles, polices
+scripts/                       Contenu de départ, création du .env
+config/                        Modèles de .env (VM de test, production)
+docs/INSTALLATION-DSI.md       Installation en production : SSO AD, service, sauvegardes
+data/                          (créé au démarrage, hors git) contenus, droits, historique
 ```
-
-Sous Linux ou macOS : `npm ci --omit=dev && node scripts/preparer-config.js && npm start`.

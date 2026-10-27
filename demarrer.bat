@@ -14,7 +14,16 @@ if errorlevel 1 (
   exit /b 1
 )
 
-if not exist "node_modules\express\package.json" (
+rem Premiere fois, ou dependances modifiees par une mise a jour (git pull)
+set "A_INSTALLER="
+if not exist "node_modules\express\package.json" set "A_INSTALLER=1"
+if not exist "node_modules\.hub-dependances" set "A_INSTALLER=1"
+if not defined A_INSTALLER (
+  fc /b package-lock.json node_modules\.hub-dependances >nul 2>nul
+  if errorlevel 1 set "A_INSTALLER=1"
+)
+if defined A_INSTALLER (
+  echo  Mise a jour des dependances...
   call "%~dp0installer.bat" /silencieux
   if errorlevel 1 exit /b 1
 )

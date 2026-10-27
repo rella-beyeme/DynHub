@@ -15,6 +15,8 @@ const auth = require("./lib/auth");
 const stockage = require("./lib/stockage");
 const droitsLib = require("./lib/droits");
 const contenus = require("./lib/contenus");
+const annuaire = require("./lib/annuaire");
+const schemas = require("./lib/schemas");
 
 const erreursConfig = verifier();
 if (erreursConfig.length) {
@@ -22,6 +24,15 @@ if (erreursConfig.length) {
   process.exit(1);
 }
 stockage.initialiser();
+
+// SSO Windows : vérification du module et du domaine au démarrage
+if (config.modeConnexion === "windows") {
+  try { annuaire.chargerSspi(); }
+  catch (e) { console.error(e.message); process.exit(1); }
+  const etat = annuaire.etatDomaine();
+  if (etat.surDomaine === false) console.warn("[connexion] ATTENTION : ce serveur n'est pas membre d'un domaine Active Directory. Seuls les comptes locaux de la machine pourront se connecter.");
+  else if (etat.adJoignable === false) console.warn("[connexion] ATTENTION : Active Directory injoignable : noms et e-mails ne seront pas lus.");
+}
 
 const app = express();
 app.disable("x-powered-by");
@@ -38,7 +49,7 @@ app.use((req, res, next) => {
       "default-src 'self'", "script-src 'self' 'unsafe-inline'", "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:", "media-src 'self' blob:", "frame-src 'self' blob:",
       "connect-src 'self'", "object-src 'none'", "base-uri 'self'", "frame-ancestors 'self'",
-      "form-action 'self' https://login.microsoftonline.com"
+      "form-action 'self'"
     ].join("; ")
   });
   if (config.urlPublique.startsWith("https://")) res.set("Strict-Transport-Security", "max-age=31536000");
@@ -72,6 +83,7 @@ app.use("/api", (req, res, next) => {
 const statiques = { index: false, dotfiles: "deny", fallthrough: true };
 app.use("/documents", express.static(config.dossierDocuments, statiques));
 app.use("/images", express.static(config.dossierImages, statiques));
+app.get("/ressources/schemas.js", (req, res) => res.type("js").sendFile(path.join(__dirname, "lib", "schemas.js")));
 app.use("/ressources", express.static(path.join(__dirname, "public", "ressources"), statiques));
 
 // ---------- Page ----------
@@ -81,8 +93,7 @@ const jsonScript = (v) => JSON.stringify(v).replace(/</g, "\\u003c").replace(/\u
 function donneesPage(data) {
   const versCarte = (l) => Object.fromEntries((l || []).map((e) => [e.nom, { fond: e.fond, texte: e.texte }]));
   const B = data.bibliotheque;
-  return "const ONGLETS = " + jsonScript(data.onglets) + ";\n" +
-    "  const DOC_GENERALE = " + jsonScript(data.hub.docGenerale || "") + ";\n" +
+  return "const DOC_GENERALE = " + jsonScript(data.hub.docGenerale || "") + ";\n" +
     "  const HUB = " + jsonScript(data.hub.sections) + ";\n" +
     "  const INTRANET = " + jsonScript(data.intranet) + ";\n" +
     "  const BIBLIOTHEQUE = " + jsonScript({
@@ -91,18 +102,38 @@ function donneesPage(data) {
     }) + ";\n";
 }
 
+// ---------- Sondage ----------
+const versionSondage = (sd) => contenus.empreinte({ q: sd.question, o: (sd.options || []).map((o) => o.libelle) });
+const votant = (u) => crypto.createHmac("sha256", config.secretSession).update(u.id).digest("hex").slice(0, 24);
+function etatSondage(data, u, voirResultats) {
+  const sd = data.intranet.sondage || {};
+  const version = versionSondage(sd);
+  const st = stockage.lireSondage();
+  const votes = st.version === version ? st.votes : {};
+  const monVote = Object.prototype.hasOwnProperty.call(votes, votant(u)) ? votes[votant(u)] : null;
+  const res = { version, monVote };
+  if (monVote !== null || voirResultats) {
+    const n = (sd.options || []).map(() => 0);
+    for (const v of Object.values(votes)) if (typeof v === "number" && v < n.length) n[v]++;
+    res.resultats = n;
+    res.total = n.reduce((a, b) => a + b, 0);
+  }
+  return res;
+}
+
 function sessionPage(u, data, droits) {
   const admin = droitsLib.estAdmin(u, droits);
   const cat = droitsLib.catalogue(data);
   const cles = droitsLib.clesDe(u, data, droits);
   const sections = {};
   for (const cle of cles) {
-    if (/^(intranet|tips|hub)$/.test(cle)) continue;
+    if (/^(intranet|tips|hub)$/.test(cle) || /^intranet:service:[^:]+$/.test(cle)) continue;
     const contenu = contenus.extraire(data, cle);
     sections[cle] = { libelle: (cat.find((e) => e.cle === cle) || {}).libelle || cle, contenu, empreinte: contenus.empreinte(contenu) };
   }
   return "const SESSION_HUB = " + jsonScript({
-    utilisateur: { nom: u.nom, email: u.email }, admin, cles, sections,
+    utilisateur: { nom: u.nom, prenom: u.prenom, email: u.email, login: u.id }, admin, cles, sections,
+    sondage: etatSondage(data, u, cles.includes("intranet:sondage")),
     tailleMaxMo: config.tailleMaxMo, mode: config.modeConnexion
   }) + ";\n";
 }
@@ -110,7 +141,7 @@ function sessionPage(u, data, droits) {
 app.get("/", (req, res) => {
   const data = stockage.lireHub();
   const droits = stockage.lireDroits();
-  const u = req.session.utilisateur;
+  const u = req.utilisateur;
   const html = fs.readFileSync(MODELE, "utf8")
     .replace("/*__DONNEES_HUB__*/", () => donneesPage(data))
     .replace("/*__SESSION_HUB__*/", () => sessionPage(u, data, droits));
@@ -120,7 +151,7 @@ app.get("/", (req, res) => {
 // ---------- API ----------
 const api = express.Router();
 api.use(express.json({ limit: "2mb" }));
-const moi = (req) => req.session.utilisateur;
+const moi = (req) => req.utilisateur;
 
 function exigerDroit(req, cle) {
   const data = stockage.lireHub(), droits = stockage.lireDroits();
@@ -139,6 +170,17 @@ api.get("/moi", (req, res) => {
   const data = stockage.lireHub(), droits = stockage.lireDroits(), u = moi(req);
   res.json({ utilisateur: u, admin: droitsLib.estAdmin(u, droits), cles: droitsLib.clesDe(u, data, droits) });
 });
+
+api.post("/sondage", asynchrone(async (req, res) => {
+  const data = stockage.lireHub();
+  const sd = data.intranet.sondage || {};
+  const option = req.body && req.body.option;
+  if (!sd.actif) contenus.erreur("Le sondage est fermé.");
+  if (req.body.version !== versionSondage(sd)) { const e = new Error("Le sondage a changé : rechargez la page."); e.statut = 409; throw e; }
+  if (!Number.isInteger(option) || option < 0 || option >= (sd.options || []).length) contenus.erreur("Réponse invalide.");
+  await stockage.voter(versionSondage(sd), votant(moi(req)), option);
+  res.json(Object.assign({ ok: true }, etatSondage(data, moi(req), true)));
+}));
 
 // Corbeille : les fichiers retirés ne sont jamais effacés directement
 function versCorbeille(chemins, u) {
@@ -315,21 +357,26 @@ api.post("/images", envoiImages.single("image"), asynchrone(async (req, res) => 
 api.get("/droits", (req, res) => {
   exigerAdmin(req);
   const data = stockage.lireHub(), droits = stockage.lireDroits();
-  res.json({ catalogue: droitsLib.catalogue(data), acl: droits.acl || {}, admins: droits.admins || [], adminsFixes: config.adminsFixes, onglets: droitsLib.ONGLETS });
+  res.json({ catalogue: droitsLib.catalogue(data), acl: droits.acl || {}, admins: droits.admins || [], adminsFixes: config.admins.map((p) => (p.type === "groupe" ? "groupe:" + p.id : (p.id || p.email))), onglets: droitsLib.ONGLETS,
+    mode: config.modeConnexion, rechercheAnnuaire: config.modeConnexion === "demo" || config.ldapRecherche || config.modeConnexion === "windows" });
 });
 
 function personnes(v) {
   if (!Array.isArray(v) || v.length > 200) contenus.erreur("Liste de personnes invalide.");
   const vus = new Set();
   return v.map((p) => {
-    const email = contenus.txt(p && p.email, 200, "E-mail").toLowerCase();
-    const oid = contenus.txt(p && p.oid, 100, "Identifiant");
-    if (!email && !oid) contenus.erreur("Chaque personne doit avoir un e-mail.");
+    p = p || {};
+    const type = p.type === "groupe" ? "groupe" : "utilisateur";
+    const id = contenus.txt(p.id, 160, "Identifiant");
+    const email = contenus.txt(p.email, 200, "E-mail").toLowerCase();
+    if (!id && !email) contenus.erreur("Chaque personne doit avoir un identifiant Windows, un groupe ou un e-mail.");
+    if (id && !/^[^\u0000-\u001f"<>]+$/.test(id)) contenus.erreur("Identifiant invalide : « " + id + " ».");
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) contenus.erreur("E-mail invalide : « " + email + " ».");
-    const k = oid || email;
+    if (type === "groupe" && !id) contenus.erreur("Nom de groupe manquant.");
+    const k = type + ":" + (type === "groupe" ? annuaire.nomGroupe(id) : (id ? annuaire.loginCourt(id) : email)).toLowerCase();
     if (vus.has(k)) return null;
     vus.add(k);
-    return { oid, email, nom: contenus.txt(p.nom, 120, "Nom") };
+    return type === "groupe" ? { type, id, nom: contenus.txt(p.nom, 160, "Nom") || id } : { type, id, email, nom: contenus.txt(p.nom, 160, "Nom") };
   }).filter(Boolean);
 }
 
@@ -339,7 +386,7 @@ api.put("/droits/:cle", asynchrone(async (req, res) => {
   const data = stockage.lireHub();
   if (!droitsLib.catalogue(data).some((e) => e.cle === cle)) contenus.erreur("Partie inconnue.");
   const liste = personnes(req.body.personnes);
-  await stockage.modifierDroits(moi(req), { nom: "droits", detail: { cle, personnes: liste.map((p) => p.email) } }, (droits) => {
+  await stockage.modifierDroits(moi(req), { nom: "droits", detail: { cle, personnes: liste.map((p) => (p.type === "groupe" ? "groupe:" : "") + (p.id || p.email)) } }, (droits) => {
     droits.acl = droits.acl || {};
     if (liste.length) droits.acl[cle] = liste; else delete droits.acl[cle];
   });
@@ -349,7 +396,7 @@ api.put("/droits/:cle", asynchrone(async (req, res) => {
 api.put("/admins", asynchrone(async (req, res) => {
   exigerAdmin(req);
   const liste = personnes(req.body.personnes);
-  await stockage.modifierDroits(moi(req), { nom: "administrateurs", detail: liste.map((p) => p.email) }, (droits) => { droits.admins = liste; });
+  await stockage.modifierDroits(moi(req), { nom: "administrateurs", detail: liste.map((p) => (p.type === "groupe" ? "groupe:" : "") + (p.id || p.email)) }, (droits) => { droits.admins = liste; });
   res.json({ ok: true });
 }));
 
@@ -357,7 +404,13 @@ api.get("/annuaire", asynchrone(async (req, res) => {
   exigerAdmin(req);
   const q = String(req.query.q || "").trim().slice(0, 60);
   if (q.length < 2) return res.json({ personnes: [] });
-  res.json({ personnes: await auth.rechercherPersonnes(q) });
+  try {
+    const r = await annuaire.rechercher(q);
+    res.json({ personnes: r.resultats, source: r.source });
+  } catch (e) {
+    console.warn("[annuaire] recherche impossible :", e.message);
+    res.json({ personnes: annuaire.groupesConnus(q).map((g) => ({ type: "groupe", id: g, nom: g })), source: "saisie manuelle", avertissement: "Annuaire injoignable : saisissez l'identifiant (DOMAINE\\login) ou le nom du groupe." });
+  }
 }));
 
 app.use("/api", api);
@@ -377,7 +430,7 @@ app.use((err, req, res, next) => {
 
 const serveurHttp = app.listen(config.port, () => {
   console.log("Hub Dyneff démarré sur le port " + config.port + " — " + config.urlPublique +
-    (config.modeConnexion === "demo" ? "  [MODE DÉMO : connexion sans Microsoft]" : ""));
+    (config.modeConnexion === "demo" ? "  [MODE DÉMO : connexion sans Active Directory]" : ""));
 });
 serveurHttp.on("error", (e) => {
   if (e.code === "EADDRINUSE") console.error("Le port " + config.port + " est déjà utilisé (le hub tourne peut-être déjà dans une autre fenêtre). Fermez-la, ou changez PORT et URL_PUBLIQUE dans le fichier .env.");

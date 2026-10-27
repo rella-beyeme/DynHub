@@ -2,7 +2,6 @@
 
 /* ---------- Menu utilisateur ---------- */
 .zone-utilisateur { display: flex; align-items: center; gap: 8px; margin-left: 12px; position: relative; }
-body:not(.vue-hub) .zone-utilisateur { margin-left: auto; }
 .util-bouton {
   display: flex; align-items: center; gap: 8px; font: inherit; font-size: .88rem; color: var(--encre);
   background: transparent; border: 1px solid transparent; border-radius: 999px; padding: 3px 12px 3px 3px; cursor: pointer;
@@ -43,13 +42,6 @@ body.edition-active .btn-edition { display: inline-flex; }
 
 .groupe-titre { position: relative; }
 .groupe-titre > .btn-edition { position: absolute; right: 48px; top: 50%; transform: translateY(-50%); }
-.intra-sites li { position: relative; }
-.intra-sites li > .btn-edition { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); padding: 5px 7px; }
-.intra-bloc h3 > .btn-edition { margin-left: auto; padding: 5px 7px; }
-.ed-zone-titre { display: none; padding: 10px 18px 0; }
-body.edition-active .ed-zone-titre { display: block; }
-.ed-pied-bloc { display: none; padding: 10px 12px; border-top: 1px solid var(--trait); }
-body.edition-active .ed-pied-bloc { display: block; }
 .ed-actions-bib { display: inline-flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 nav.sommaire .tout .btn-edition { margin-left: 4px; }
 
@@ -137,4 +129,24 @@ dialog.edition.large { width: min(980px, calc(100% - 32px)); }
   .ed-corps.droits { grid-template-columns: 1fr; }
   .dr-liste { border-right: 0; border-bottom: 1px solid var(--trait); max-height: 35vh; }
 }
-.intra-barre > .btn-edition { flex: 0 0 auto; padding: 5px 7px; margin-left: -2px; }
+
+/* ---------- Modules de l'intranet en mode modification ---------- */
+.zone-utilisateur { margin-left: auto; }
+.modifiable { position: relative; }
+.modifiable > .btn-edition { position: absolute; top: -14px; right: 14px; z-index: 6; box-shadow: 0 2px 10px rgba(20,25,35,.18); }
+.alerte.modifiable > .btn-edition, .banniere.modifiable > .btn-edition { top: 6px; right: 14px; }
+body.edition-active .alerte.modifiable .largeur { padding-right: 130px; }
+body.edition-active .banniere.modifiable .largeur { padding-top: 44px; }
+body.edition-active .modifiable { outline: 2px dashed rgba(232,164,0,.6); outline-offset: 3px; }
+body.edition-active .tete .modifiable, body.edition-active .alerte.modifiable, body.edition-active .pied .modifiable { outline-offset: -3px; }
+.seulement-edition { display: none !important; }
+body.edition-active .seulement-edition { display: flex !important; }
+.module-vide { border-style: dashed !important; background: #FFFBEA !important; flex-direction: column; justify-content: center; min-height: 120px; }
+.ed-apercu { width: 38px; height: 38px; border-radius: 8px; border: 1px solid var(--trait); display: grid; place-items: center; font-weight: 700; flex: none; }
+.ed-ligne select { flex: 1; min-width: 0; width: auto; }
+.dr-filtre { width: 100%; font: inherit; font-size: .88rem; padding: 8px 12px; border: 1px solid var(--trait); border-radius: 999px; margin: 4px 0 6px; }
+.dr-personnes li.groupe { background: #FFF4C2; }
+.dr-type { font-size: .9rem; }
+.bouton.a-completer { opacity: .85; }
+/* Cartes à bords masqués : le bouton reste à l'intérieur */
+.une.modifiable > .btn-edition, .bref.modifiable > .btn-edition, .une-service.modifiable > .btn-edition, .article.modifiable > .btn-edition { top: 10px; }

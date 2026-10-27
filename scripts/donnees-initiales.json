@@ -1,216 +1,1340 @@
 {
   "version": 1,
-  "onglets": {
-    "tips": "Tips, IA & outils collaboratifs",
-    "tipsSous": "",
-    "hub": "Hub applicatif",
-    "hubSous": "· vos outils en un clic",
-    "intranet": "Intranet",
-    "intranetSous": "· sites SharePoint Dyneff"
-  },
   "intranet": {
-    "titre": "Welcome to France",
-    "legende": "",
-    "photo": "images/accueil-dyneff.jpg",
-    "toutLeContenu": "",
-    "sites": [
-      {
-        "id": "dyneff",
-        "nom": "Dyneff",
-        "url": "",
-        "barre": true,
-        "liste": false
+    "version": 2,
+    "reglages": {
+      "nomSite": "Intranet",
+      "salutation": "voici l'essentiel du jour",
+      "annuaireUrl": "",
+      "annuaireParametre": "",
+      "documentsUrl": ""
+    },
+    "alerte": {
+      "actif": true,
+      "etiquette": "Info DSI",
+      "style": "jaune",
+      "texte": "Maintenance planifiée de Sage X3 le samedi [date] de [heure] à [heure]. Les autres applications restent disponibles.",
+      "lienTexte": "En savoir plus",
+      "lienLien": ""
+    },
+    "une": {
+      "etiquette": "À la une",
+      "titre": "Le nouveau hub Dyneff est en ligne",
+      "texte": "Intranet, applications métier et guides « Tips, IA & outils collaboratifs » réunis en un seul point d'entrée, avec votre compte Windows.",
+      "bouton1Texte": "Lire l'article",
+      "bouton1Lien": "#/actualites/nouveau-hub",
+      "bouton2Texte": "Voir les guides",
+      "bouton2Lien": "#/tips",
+      "signature": "Marketing & Communication · DSI",
+      "image": ""
+    },
+    "acces": {
+      "titre": "Accès rapides",
+      "elements": [
+        {
+          "libelle": "Outlook",
+          "lien": "https://outlook.office.com/mail/",
+          "icone": "mail",
+          "theme": "bleu"
+        },
+        {
+          "libelle": "Teams",
+          "lien": "https://teams.microsoft.com/",
+          "icone": "bulle",
+          "theme": "bleu"
+        },
+        {
+          "libelle": "Sage X3",
+          "lien": "",
+          "icone": "euro",
+          "theme": "gris"
+        },
+        {
+          "libelle": "Mes congés",
+          "lien": "",
+          "icone": "soleil",
+          "theme": "vert"
+        },
+        {
+          "libelle": "Notes de frais",
+          "lien": "",
+          "icone": "ticket",
+          "theme": "vert"
+        },
+        {
+          "libelle": "Annuaire",
+          "lien": "#/annuaire",
+          "icone": "personnes",
+          "theme": "gris"
+        },
+        {
+          "libelle": "Hub applicatif",
+          "lien": "#/hub",
+          "icone": "grille",
+          "theme": "jaune"
+        },
+        {
+          "libelle": "Tips IA",
+          "lien": "#/tips",
+          "icone": "etincelle",
+          "theme": "jaune"
+        }
+      ]
+    },
+    "direction": {
+      "titre": "Le mot de la direction",
+      "texte": "[Message trimestriel de la Direction générale : 3 à 4 lignes sur le cap, les priorités multi-énergies et les temps forts à venir.]",
+      "lienTexte": "Lire le message complet",
+      "lienLien": ""
+    },
+    "actualites": {
+      "titre": "Actualités",
+      "elements": [
+        {
+          "id": "nouveau-hub",
+          "service": "dsi",
+          "pays": "",
+          "titre": "Le nouveau hub Dyneff est en ligne",
+          "resume": "Intranet, applications et guides réunis en un seul point d'entrée, avec votre compte Windows.",
+          "texte": "Le hub Dyneff réunit désormais l'intranet, le hub applicatif et la bibliothèque « Tips, IA & outils collaboratifs ».\n\nVous êtes reconnu automatiquement grâce à votre session Windows : plus besoin de mot de passe supplémentaire.\n\nChaque service anime son espace et publie ses actualités. Une idée, une remarque ? Écrivez à Marketing & Communication.",
+          "date": "2026-10-27",
+          "auteur": "Marketing & Communication · DSI",
+          "image": "",
+          "lien": ""
+        },
+        {
+          "id": "feuille-de-route",
+          "service": "direction",
+          "pays": "",
+          "titre": "Feuille de route multi-énergies : les priorités [année]",
+          "resume": "Carburants, énergies renouvelables, nouvelles mobilités : ce qui change pour nos métiers.",
+          "texte": "Carburants, énergies renouvelables, nouvelles mobilités : ce qui change pour nos métiers.",
+          "date": "2026-10-27",
+          "auteur": "",
+          "image": "",
+          "lien": ""
+        },
+        {
+          "id": "sage-x3-recette",
+          "service": "dsi",
+          "pays": "",
+          "titre": "Migration Sage X3 : point d'étape et calendrier de recette",
+          "resume": "Les prochains scénarios de test, qui est concerné et comment se préparer.",
+          "texte": "Les prochains scénarios de test, qui est concerné et comment se préparer.",
+          "date": "2026-10-26",
+          "auteur": "",
+          "image": "",
+          "lien": ""
+        },
+        {
+          "id": "entretiens-annuels",
+          "service": "ressources-humaines",
+          "pays": "",
+          "titre": "Entretiens annuels : la campagne ouvre le [date]",
+          "resume": "Guide manager, trame d'entretien et calendrier dans l'espace RH.",
+          "texte": "Guide manager, trame d'entretien et calendrier dans l'espace RH.",
+          "date": "2026-10-26",
+          "auteur": "",
+          "image": "",
+          "lien": ""
+        },
+        {
+          "id": "campagne-reseau",
+          "service": "marketing-communication",
+          "pays": "",
+          "titre": "Nouvelle campagne réseau : le kit est disponible",
+          "resume": "Affiches, PLV et messages clés pour les stations, à télécharger.",
+          "texte": "Affiches, PLV et messages clés pour les stations, à télécharger.",
+          "date": "2026-10-23",
+          "auteur": "",
+          "image": "",
+          "lien": ""
+        },
+        {
+          "id": "pluie-depotage",
+          "service": "qhse",
+          "pays": "",
+          "titre": "Livrer en sécurité par temps de pluie",
+          "resume": "Les bons réflexes au dépotage, rappelés par l'équipe QHSE.",
+          "texte": "Les bons réflexes au dépotage, rappelés par l'équipe QHSE.",
+          "date": "2026-10-22",
+          "auteur": "",
+          "image": "",
+          "lien": ""
+        },
+        {
+          "id": "nouvelle-station",
+          "service": "reseau",
+          "pays": "",
+          "titre": "Bienvenue à la station [nom] dans le réseau",
+          "resume": "Présentation de l'équipe et des services proposés aux clients.",
+          "texte": "Présentation de l'équipe et des services proposés aux clients.",
+          "date": "2026-10-21",
+          "auteur": "",
+          "image": "",
+          "lien": ""
+        },
+        {
+          "id": "gerone-negoce",
+          "service": "negoce",
+          "pays": "ES",
+          "titre": "Gérone : l'équipe négoce se présente",
+          "resume": "Article disponible en français et en espagnol.",
+          "texte": "Article disponible en français et en espagnol.",
+          "date": "2026-10-20",
+          "auteur": "",
+          "image": "",
+          "lien": ""
+        },
+        {
+          "id": "arbre-de-noel",
+          "service": "cse",
+          "pays": "",
+          "titre": "Arbre de Noël : inscriptions ouvertes",
+          "resume": "Inscriptions et billetterie jusqu'au [date].",
+          "texte": "Inscriptions et billetterie jusqu'au [date].",
+          "date": "2026-10-19",
+          "auteur": "",
+          "image": "",
+          "lien": ""
+        }
+      ]
+    },
+    "agenda": {
+      "titre": "Agenda",
+      "elements": [
+        {
+          "date": "2026-11-12",
+          "heure": "9 h – 12 h",
+          "titre": "Formation sécurité chauffeurs",
+          "lieu": "Dépôt [site]",
+          "lien": ""
+        },
+        {
+          "date": "2026-11-19",
+          "heure": "18 h",
+          "titre": "Afterwork du CSE",
+          "lieu": "Siège, Montpellier",
+          "lien": ""
+        },
+        {
+          "date": "2026-11-26",
+          "heure": "11 h – 11 h 45",
+          "titre": "Webinaire : bien utiliser l'IA au quotidien",
+          "lieu": "Teams",
+          "lien": ""
+        }
+      ]
+    },
+    "securite": {
+      "titre": "Sécurité d'abord",
+      "badge": "QHSE",
+      "compteur": "[XX]",
+      "compteurLibelle": "jours sans accident avec arrêt sur l'ensemble des sites",
+      "sousTitre": "Quart d'heure sécurité d'octobre",
+      "texte": "[Thème du mois : ex. dépotage et livraison par temps de pluie] — support à animer en équipe.",
+      "boutonTexte": "Signaler une situation dangereuse",
+      "boutonLien": ""
+    },
+    "bienvenue": {
+      "titre": "Bienvenue à…",
+      "badge": "RH",
+      "lienTexte": "Tous les mouvements du mois",
+      "lienLien": "",
+      "elements": [
+        {
+          "nom": "[Prénom Nom]",
+          "poste": "[Poste] · Réseau stations · [Site]",
+          "theme": "orange"
+        },
+        {
+          "nom": "[Prénom Nom]",
+          "poste": "[Poste] · Logistique · [Dépôt]",
+          "theme": "vert"
+        },
+        {
+          "nom": "[Prénom Nom]",
+          "poste": "[Poste] · Négoce · Gérone",
+          "theme": "violet"
+        }
+      ]
+    },
+    "services": {
+      "titre": "Espaces services",
+      "sousTitre": "Chaque service anime son espace : actualités, documents, démarches et contacts.",
+      "elements": [
+        {
+          "id": "direction",
+          "nom": "Direction générale",
+          "court": "Direction",
+          "desc": "Stratégie, messages de la direction, organigramme",
+          "theme": "gris",
+          "icone": "batiment",
+          "site": ""
+        },
+        {
+          "id": "marketing-communication",
+          "nom": "Marketing & Communication",
+          "court": "Market/Com",
+          "desc": "Campagnes, kit de com, revue de presse",
+          "theme": "rouge",
+          "icone": "megaphone",
+          "site": "marketing-communication"
+        },
+        {
+          "id": "ressources-humaines",
+          "nom": "Ressources humaines",
+          "court": "RH",
+          "desc": "Démarches, formation, mobilité, avantages",
+          "theme": "vert",
+          "icone": "personnes",
+          "site": "ressources-humaines"
+        },
+        {
+          "id": "qhse",
+          "nom": "QHSE",
+          "court": "QHSE",
+          "desc": "Sécurité, environnement, qualité, remontées terrain",
+          "theme": "jaune",
+          "icone": "bouclier",
+          "site": "hsse"
+        },
+        {
+          "id": "dsi",
+          "nom": "DSI",
+          "court": "DSI",
+          "desc": "Support, applications, cybersécurité, projets",
+          "theme": "bleu",
+          "icone": "ecran",
+          "site": "it-methodes-et-digitalisation"
+        },
+        {
+          "id": "finance",
+          "nom": "Finance & Comptabilité",
+          "court": "Finance",
+          "desc": "Procédures, notes de frais, clôtures, Sage X3",
+          "theme": "gris",
+          "icone": "euro",
+          "site": "direction-finances"
+        },
+        {
+          "id": "commercial",
+          "nom": "Commercial & Agences",
+          "court": "Commercial",
+          "desc": "Offres, argumentaires, actualité des agences",
+          "theme": "orange",
+          "icone": "mallette",
+          "site": "adv-commerciale"
+        },
+        {
+          "id": "reseau",
+          "nom": "Réseau stations-service",
+          "court": "Réseau",
+          "desc": "Procédures station, prix, campagnes, autoroutes",
+          "theme": "orange",
+          "icone": "station",
+          "site": ""
+        },
+        {
+          "id": "logistique",
+          "nom": "Logistique & Dépôts",
+          "court": "Logistique",
+          "desc": "Transport, flotte, plannings, sécurité livraison",
+          "theme": "vert",
+          "icone": "camion",
+          "site": "logistique"
+        },
+        {
+          "id": "negoce",
+          "nom": "Négoce & Approvisionnement",
+          "court": "Négoce",
+          "desc": "Marchés, approvisionnements, agences de négoce",
+          "theme": "bleu",
+          "icone": "echange",
+          "site": ""
+        },
+        {
+          "id": "achats-juridique",
+          "nom": "Achats & Juridique",
+          "court": "Juridique",
+          "desc": "Fournisseurs, contrats, conformité",
+          "theme": "gris",
+          "icone": "balance",
+          "site": "juridique"
+        },
+        {
+          "id": "cse",
+          "nom": "CSE",
+          "court": "CSE",
+          "desc": "Activités sociales, billetterie, comptes-rendus",
+          "theme": "rose",
+          "icone": "coeur",
+          "site": "cse"
+        }
+      ]
+    },
+    "offres": {
+      "titre": "Offres internes",
+      "lienTexte": "Toutes les offres · France & Espagne",
+      "lienLien": "#/services/ressources-humaines",
+      "elements": [
+        {
+          "titre": "Chargé(e) de clientèle",
+          "meta": "Montpellier · CDI · publié le [date]",
+          "pays": "FR",
+          "lien": ""
+        },
+        {
+          "titre": "Conducteur(trice) PL citerne",
+          "meta": "[Dépôt] · CDI · publié le [date]",
+          "pays": "FR",
+          "lien": ""
+        },
+        {
+          "titre": "Responsable de station",
+          "meta": "Espagne · CDI · publié le [date]",
+          "pays": "ES",
+          "lien": ""
+        }
+      ]
+    },
+    "campagne": {
+      "etiquette": "Marketing & Communication",
+      "titre": "Campagne stations [nom de la campagne]",
+      "texte": "Du [date] au [date] dans tout le réseau. Affiches, PLV et argumentaire caisse à télécharger.",
+      "theme": "rouge",
+      "boutonTexte": "Télécharger le kit",
+      "boutonLien": "#/services/marketing-communication"
+    },
+    "cse": {
+      "titre": "Le CSE vous informe",
+      "accroche": "Arbre de Noël : inscriptions ouvertes",
+      "texte": "Jusqu'au [date]. Billetterie, chèques vacances et compte-rendus de réunion dans l'espace CSE.",
+      "lienTexte": "Ouvrir l'espace CSE",
+      "lienLien": "#/services/cse"
+    },
+    "sondage": {
+      "actif": true,
+      "titre": "Votre avis compte",
+      "question": "Ce nouvel intranet vous fait gagner du temps ?",
+      "options": [
+        {
+          "libelle": "Oui, clairement"
+        },
+        {
+          "libelle": "Un peu"
+        },
+        {
+          "libelle": "Pas encore"
+        }
+      ],
+      "signature": "Sondage anonyme · Marketing & Communication"
+    },
+    "chiffres": {
+      "titre": "Dyneff en bref",
+      "photo": "images/accueil-dyneff.jpg",
+      "lienTexte": "Notre histoire, nos métiers",
+      "lienLien": "",
+      "elements": [
+        {
+          "valeur": "1958",
+          "libelle": "origines du groupe",
+          "theme": "rouge"
+        },
+        {
+          "valeur": "850+",
+          "libelle": "collaborateurs",
+          "theme": "vert"
+        },
+        {
+          "valeur": "140",
+          "libelle": "stations-service",
+          "theme": "gris"
+        },
+        {
+          "valeur": "2",
+          "libelle": "pays : France & Espagne",
+          "theme": "gris"
+        }
+      ]
+    },
+    "sites": {
+      "titre": "Sites SharePoint de l'intranet",
+      "lienToutTexte": "Afficher tout le contenu du site",
+      "lienToutLien": "",
+      "elements": [
+        {
+          "id": "dyneff",
+          "nom": "Dyneff",
+          "url": ""
+        },
+        {
+          "id": "cse",
+          "nom": "CSE",
+          "url": ""
+        },
+        {
+          "id": "tips-collaboration-ia",
+          "nom": "Tips Collaboration & IA",
+          "url": ""
+        },
+        {
+          "id": "it-methodes-et-digitalisation",
+          "nom": "IT - Méthodes et Digitalisation",
+          "url": ""
+        },
+        {
+          "id": "ressources-humaines",
+          "nom": "Ressources Humaines",
+          "url": ""
+        },
+        {
+          "id": "juridique",
+          "nom": "Juridique",
+          "url": ""
+        },
+        {
+          "id": "conformite",
+          "nom": "Conformité",
+          "url": ""
+        },
+        {
+          "id": "hsse",
+          "nom": "HSSE",
+          "url": ""
+        },
+        {
+          "id": "marketing-communication",
+          "nom": "Marketing & Communication",
+          "url": ""
+        },
+        {
+          "id": "direction-finances",
+          "nom": "Direction Finances",
+          "url": ""
+        },
+        {
+          "id": "stat-atr",
+          "nom": "Stat ATR",
+          "url": ""
+        },
+        {
+          "id": "adv-commerciale",
+          "nom": "ADV Commerciale",
+          "url": ""
+        },
+        {
+          "id": "logistique",
+          "nom": "Logistique",
+          "url": ""
+        },
+        {
+          "id": "marches-publics",
+          "nom": "Marches Publics",
+          "url": ""
+        },
+        {
+          "id": "60-ans-dyneff",
+          "nom": "60 Ans Dyneff",
+          "url": ""
+        },
+        {
+          "id": "activite-gaz-elec",
+          "nom": "Activité Gaz - Elec",
+          "url": ""
+        },
+        {
+          "id": "asd",
+          "nom": "ASD",
+          "url": ""
+        },
+        {
+          "id": "audits",
+          "nom": "Audits",
+          "url": ""
+        },
+        {
+          "id": "bio-ae",
+          "nom": "Bio-AE",
+          "url": ""
+        },
+        {
+          "id": "boite-a-idees",
+          "nom": "Boite à Idées",
+          "url": ""
+        },
+        {
+          "id": "cee",
+          "nom": "CEE",
+          "url": ""
+        },
+        {
+          "id": "credit-client",
+          "nom": "Crédit client",
+          "url": ""
+        },
+        {
+          "id": "detail",
+          "nom": "Détail",
+          "url": ""
+        },
+        {
+          "id": "ged-hsse-tech",
+          "nom": "GED HSSE-TECH",
+          "url": ""
+        },
+        {
+          "id": "gestion-de-projet",
+          "nom": "Gestion de projet",
+          "url": ""
+        }
+      ]
+    },
+    "pied": {
+      "adresse": "Siège · Montpellier — France & Espagne",
+      "liens": [
+        {
+          "texte": "Proposer une actualité",
+          "lien": "#/services/marketing-communication"
+        },
+        {
+          "texte": "Charte de publication",
+          "lien": ""
+        },
+        {
+          "texte": "Support DSI",
+          "lien": "#/services/dsi"
+        },
+        {
+          "texte": "Share",
+          "lien": ""
+        },
+        {
+          "texte": "Intranet Station",
+          "lien": ""
+        }
+      ]
+    },
+    "pages": {
+      "direction": {
+        "entete": {
+          "accroche": "Stratégie, messages de la direction, organigramme",
+          "boutonTexte": "",
+          "boutonLien": "",
+          "liens": []
+        },
+        "raccourcis": {
+          "titre": "Raccourcis",
+          "elements": []
+        },
+        "une": {},
+        "liste": {
+          "titre": "",
+          "elements": []
+        },
+        "faq": {
+          "titre": "Questions fréquentes",
+          "elements": []
+        },
+        "calendrier": {
+          "titre": "Calendrier",
+          "elements": []
+        },
+        "documents": {
+          "titre": "Documents utiles",
+          "elements": []
+        },
+        "contacts": {
+          "titre": "Contacts",
+          "elements": []
+        },
+        "encart": {}
       },
-      {
-        "id": "cse",
-        "nom": "CSE",
-        "url": "",
-        "barre": true,
-        "liste": true
+      "marketing-communication": {
+        "entete": {
+          "accroche": "La marque Dyneff, ses campagnes et tous les outils pour en parler juste.",
+          "boutonTexte": "Demander une création",
+          "boutonLien": "",
+          "liens": [
+            {
+              "texte": "Kit de communication",
+              "lien": ""
+            },
+            {
+              "texte": "Campagnes",
+              "lien": ""
+            },
+            {
+              "texte": "Photothèque",
+              "lien": ""
+            },
+            {
+              "texte": "Revue de presse",
+              "lien": ""
+            },
+            {
+              "texte": "Publier sur l'intranet",
+              "lien": ""
+            }
+          ]
+        },
+        "raccourcis": {
+          "titre": "Kit de communication",
+          "sousTitre": "Toujours la dernière version validée — inutile de la garder sur votre poste.",
+          "elements": [
+            {
+              "libelle": "Logos Dyneff",
+              "detail": "PNG, SVG · fond clair et foncé",
+              "lien": "",
+              "icone": "cube"
+            },
+            {
+              "libelle": "Charte graphique",
+              "detail": "Couleurs, typographies, usages",
+              "lien": "",
+              "icone": "palette"
+            },
+            {
+              "libelle": "Modèles PowerPoint",
+              "detail": "Présentation interne et client",
+              "lien": "",
+              "icone": "ecran"
+            },
+            {
+              "libelle": "Modèles Word",
+              "detail": "Courrier, note, compte-rendu",
+              "lien": "",
+              "icone": "document"
+            },
+            {
+              "libelle": "Signature e-mail",
+              "detail": "Générateur en ligne",
+              "lien": "",
+              "icone": "mail"
+            },
+            {
+              "libelle": "Photothèque",
+              "detail": "Stations, dépôts, équipes",
+              "lien": "",
+              "icone": "image"
+            }
+          ]
+        },
+        "une": {},
+        "liste": {
+          "titre": "Campagnes en cours",
+          "lienToutTexte": "",
+          "lienToutLien": "",
+          "elements": [
+            {
+              "titre": "[Nom de la campagne stations]",
+              "meta": "Réseau stations · [date] → [date] · affiches, PLV, écrans et argumentaire caisse",
+              "badge": "Réseau stations",
+              "lien": ""
+            },
+            {
+              "titre": "[Campagne énergie domestique]",
+              "meta": "Particuliers · [date] → [date] · messages clés pour les agences et le service client",
+              "badge": "Particuliers",
+              "lien": ""
+            },
+            {
+              "titre": "Lancement du nouvel intranet",
+              "meta": "Interne · en continu · affichettes, tutoriel vidéo et FAQ",
+              "badge": "Interne",
+              "lien": ""
+            }
+          ]
+        },
+        "faq": {
+          "titre": "Questions fréquentes",
+          "elements": []
+        },
+        "calendrier": {
+          "titre": "Calendrier éditorial",
+          "elements": [
+            {
+              "quand": "S45",
+              "quoi": "Portrait métier : [chauffeur PL]"
+            },
+            {
+              "quand": "S46",
+              "quoi": "Dossier : nos énergies de demain"
+            },
+            {
+              "quand": "S47",
+              "quoi": "Retour en images : [événement]"
+            },
+            {
+              "quand": "S48",
+              "quoi": "Lettre interne de novembre"
+            }
+          ]
+        },
+        "documents": {
+          "titre": "Revue de presse",
+          "elements": [
+            {
+              "nom": "[Titre de l'article]",
+              "type": "[Média] · [date]",
+              "lien": ""
+            },
+            {
+              "nom": "[Titre de l'article]",
+              "type": "[Média] · [date]",
+              "lien": ""
+            },
+            {
+              "nom": "[Titre de l'article]",
+              "type": "[Média] · [date]",
+              "lien": ""
+            }
+          ]
+        },
+        "contacts": {
+          "titre": "Contacts",
+          "elements": []
+        },
+        "encart": {
+          "titre": "Ambassadeurs Dyneff",
+          "texte": "Relayez les publications officielles de Dyneff sur vos réseaux : la sélection de la semaine est prête à partager.",
+          "boutonTexte": "Voir les posts à relayer",
+          "boutonLien": ""
+        }
       },
-      {
-        "id": "tips-collaboration-ia",
-        "nom": "Tips Collaboration & IA",
-        "url": "",
-        "barre": true,
-        "liste": true
+      "ressources-humaines": {
+        "entete": {
+          "accroche": "Vos démarches, votre parcours et la vie de l'entreprise, en France et en Espagne.",
+          "boutonTexte": "Poser une question aux RH",
+          "boutonLien": "",
+          "liens": [
+            {
+              "texte": "Mes démarches",
+              "lien": ""
+            },
+            {
+              "texte": "Formation",
+              "lien": ""
+            },
+            {
+              "texte": "Recrutement & mobilité",
+              "lien": ""
+            },
+            {
+              "texte": "Rémunération & avantages",
+              "lien": ""
+            },
+            {
+              "texte": "Santé & qualité de vie",
+              "lien": ""
+            },
+            {
+              "texte": "Documents",
+              "lien": ""
+            }
+          ]
+        },
+        "raccourcis": {
+          "titre": "Mes démarches en un clic",
+          "sousTitre": "",
+          "elements": [
+            {
+              "libelle": "Poser un congé",
+              "detail": "Outil de gestion des temps [à préciser]",
+              "lien": "",
+              "icone": "soleil"
+            },
+            {
+              "libelle": "Mon bulletin de paie",
+              "detail": "Coffre-fort numérique [à préciser]",
+              "lien": "",
+              "icone": "document"
+            },
+            {
+              "libelle": "Note de frais",
+              "detail": "Saisie et justificatifs",
+              "lien": "",
+              "icone": "ticket"
+            },
+            {
+              "libelle": "Attestation employeur",
+              "detail": "Demande en ligne, réponse sous 48 h",
+              "lien": "",
+              "icone": "attestation"
+            },
+            {
+              "libelle": "M'inscrire à une formation",
+              "detail": "Catalogue et demandes",
+              "lien": "",
+              "icone": "livre"
+            },
+            {
+              "libelle": "Mutuelle & prévoyance",
+              "detail": "Garanties, affiliation, contacts",
+              "lien": "",
+              "icone": "coeur"
+            }
+          ]
+        },
+        "une": {
+          "etiquette": "À la une RH",
+          "titre": "Entretiens annuels : la campagne ouvre le [date]",
+          "texte": "Trame d'entretien, guide du manager et calendrier : tout ce qu'il faut pour préparer ce temps d'échange, salarié comme manager.",
+          "bouton1Texte": "Je prépare mon entretien",
+          "bouton1Lien": "",
+          "bouton2Texte": "Guide du manager (PDF)",
+          "bouton2Lien": "",
+          "icone": "calendrier",
+          "image": ""
+        },
+        "liste": {
+          "titre": "Offres internes & mobilité",
+          "lienToutTexte": "Toutes les offres",
+          "lienToutLien": "",
+          "elements": [
+            {
+              "titre": "Chargé(e) de clientèle",
+              "meta": "Service client · Montpellier · CDI",
+              "badge": "France",
+              "lien": ""
+            },
+            {
+              "titre": "Conducteur(trice) PL citerne",
+              "meta": "Logistique · [Dépôt] · CDI",
+              "badge": "France",
+              "lien": ""
+            },
+            {
+              "titre": "Responsable de station",
+              "meta": "Réseau stations · [Ville] · CDI",
+              "badge": "España",
+              "lien": ""
+            },
+            {
+              "titre": "Assistant(e) négoce",
+              "meta": "Négoce · Gérone · CDI",
+              "badge": "España",
+              "lien": ""
+            }
+          ]
+        },
+        "faq": {
+          "titre": "Questions fréquentes",
+          "elements": [
+            {
+              "question": "Comment poser un jour de congé ou de RTT ?",
+              "reponse": "[Réponse RH : outil, délai de prévenance, circuit de validation.]"
+            },
+            {
+              "question": "Où retrouver mes anciens bulletins de paie ?",
+              "reponse": "[Réponse RH : coffre-fort numérique, durée de conservation.]"
+            },
+            {
+              "question": "Qui contacter en cas d'arrêt maladie ?",
+              "reponse": "[Réponse RH : interlocuteur, documents à transmettre, délais.]"
+            },
+            {
+              "question": "Comment candidater à une offre interne ?",
+              "reponse": "[Réponse RH : process de mobilité, information du manager.]"
+            }
+          ]
+        },
+        "calendrier": {
+          "titre": "Calendrier RH",
+          "elements": [
+            {
+              "quand": "[date]",
+              "quoi": "Ouverture des entretiens annuels"
+            },
+            {
+              "quand": "[date]",
+              "quoi": "Date limite des demandes de formation [année]"
+            },
+            {
+              "quand": "[date]",
+              "quoi": "Pose des congés de fin d'année"
+            },
+            {
+              "quand": "[date]",
+              "quoi": "Journée d'intégration des nouveaux arrivants"
+            }
+          ]
+        },
+        "documents": {
+          "titre": "Documents utiles",
+          "elements": [
+            {
+              "nom": "Livret d'accueil",
+              "type": "PDF",
+              "lien": ""
+            },
+            {
+              "nom": "Règlement intérieur",
+              "type": "PDF",
+              "lien": ""
+            },
+            {
+              "nom": "Accords d'entreprise",
+              "type": "Dossier",
+              "lien": ""
+            },
+            {
+              "nom": "Organigramme",
+              "type": "PDF",
+              "lien": ""
+            },
+            {
+              "nom": "Charte télétravail",
+              "type": "PDF",
+              "lien": ""
+            }
+          ]
+        },
+        "contacts": {
+          "titre": "Vos contacts RH",
+          "elements": [
+            {
+              "nom": "[Prénom Nom]",
+              "role": "Paie & administration du personnel",
+              "lien": ""
+            },
+            {
+              "nom": "[Prénom Nom]",
+              "role": "Formation & développement",
+              "lien": ""
+            },
+            {
+              "nom": "[Prénom Nom]",
+              "role": "Recrutement · France & Espagne",
+              "lien": ""
+            }
+          ]
+        },
+        "encart": {}
       },
-      {
-        "id": "it-methodes-et-digitalisation",
-        "nom": "IT - Méthodes et Digitalisation",
-        "url": "",
-        "barre": true,
-        "liste": true
+      "qhse": {
+        "entete": {
+          "accroche": "Sécurité, environnement, qualité, remontées terrain",
+          "boutonTexte": "",
+          "boutonLien": "",
+          "liens": []
+        },
+        "raccourcis": {
+          "titre": "Raccourcis",
+          "elements": []
+        },
+        "une": {},
+        "liste": {
+          "titre": "",
+          "elements": []
+        },
+        "faq": {
+          "titre": "Questions fréquentes",
+          "elements": []
+        },
+        "calendrier": {
+          "titre": "Calendrier",
+          "elements": []
+        },
+        "documents": {
+          "titre": "Documents utiles",
+          "elements": []
+        },
+        "contacts": {
+          "titre": "Contacts",
+          "elements": []
+        },
+        "encart": {}
       },
-      {
-        "id": "ressources-humaines",
-        "nom": "Ressources Humaines",
-        "url": "",
-        "barre": true,
-        "liste": true
+      "dsi": {
+        "entete": {
+          "accroche": "Support, applications, cybersécurité, projets",
+          "boutonTexte": "",
+          "boutonLien": "",
+          "liens": []
+        },
+        "raccourcis": {
+          "titre": "Raccourcis",
+          "elements": []
+        },
+        "une": {},
+        "liste": {
+          "titre": "",
+          "elements": []
+        },
+        "faq": {
+          "titre": "Questions fréquentes",
+          "elements": []
+        },
+        "calendrier": {
+          "titre": "Calendrier",
+          "elements": []
+        },
+        "documents": {
+          "titre": "Documents utiles",
+          "elements": []
+        },
+        "contacts": {
+          "titre": "Contacts",
+          "elements": []
+        },
+        "encart": {}
       },
-      {
-        "id": "juridique",
-        "nom": "Juridique",
-        "url": "",
-        "barre": true,
-        "liste": true
+      "finance": {
+        "entete": {
+          "accroche": "Procédures, notes de frais, clôtures, Sage X3",
+          "boutonTexte": "",
+          "boutonLien": "",
+          "liens": []
+        },
+        "raccourcis": {
+          "titre": "Raccourcis",
+          "elements": []
+        },
+        "une": {},
+        "liste": {
+          "titre": "",
+          "elements": []
+        },
+        "faq": {
+          "titre": "Questions fréquentes",
+          "elements": []
+        },
+        "calendrier": {
+          "titre": "Calendrier",
+          "elements": []
+        },
+        "documents": {
+          "titre": "Documents utiles",
+          "elements": []
+        },
+        "contacts": {
+          "titre": "Contacts",
+          "elements": []
+        },
+        "encart": {}
       },
-      {
-        "id": "conformite",
-        "nom": "Conformité",
-        "url": "",
-        "barre": true,
-        "liste": true
+      "commercial": {
+        "entete": {
+          "accroche": "Offres, argumentaires, actualité des agences",
+          "boutonTexte": "",
+          "boutonLien": "",
+          "liens": []
+        },
+        "raccourcis": {
+          "titre": "Raccourcis",
+          "elements": []
+        },
+        "une": {},
+        "liste": {
+          "titre": "",
+          "elements": []
+        },
+        "faq": {
+          "titre": "Questions fréquentes",
+          "elements": []
+        },
+        "calendrier": {
+          "titre": "Calendrier",
+          "elements": []
+        },
+        "documents": {
+          "titre": "Documents utiles",
+          "elements": []
+        },
+        "contacts": {
+          "titre": "Contacts",
+          "elements": []
+        },
+        "encart": {}
       },
-      {
-        "id": "hsse",
-        "nom": "HSSE",
-        "url": "",
-        "barre": true,
-        "liste": true
+      "reseau": {
+        "entete": {
+          "accroche": "Procédures station, prix, campagnes, autoroutes",
+          "boutonTexte": "",
+          "boutonLien": "",
+          "liens": []
+        },
+        "raccourcis": {
+          "titre": "Raccourcis",
+          "elements": []
+        },
+        "une": {},
+        "liste": {
+          "titre": "",
+          "elements": []
+        },
+        "faq": {
+          "titre": "Questions fréquentes",
+          "elements": []
+        },
+        "calendrier": {
+          "titre": "Calendrier",
+          "elements": []
+        },
+        "documents": {
+          "titre": "Documents utiles",
+          "elements": []
+        },
+        "contacts": {
+          "titre": "Contacts",
+          "elements": []
+        },
+        "encart": {}
       },
-      {
-        "id": "marketing-communication",
-        "nom": "Marketing & Communication",
-        "url": "",
-        "barre": true,
-        "liste": true
+      "logistique": {
+        "entete": {
+          "accroche": "Transport, flotte, plannings, sécurité livraison",
+          "boutonTexte": "",
+          "boutonLien": "",
+          "liens": []
+        },
+        "raccourcis": {
+          "titre": "Raccourcis",
+          "elements": []
+        },
+        "une": {},
+        "liste": {
+          "titre": "",
+          "elements": []
+        },
+        "faq": {
+          "titre": "Questions fréquentes",
+          "elements": []
+        },
+        "calendrier": {
+          "titre": "Calendrier",
+          "elements": []
+        },
+        "documents": {
+          "titre": "Documents utiles",
+          "elements": []
+        },
+        "contacts": {
+          "titre": "Contacts",
+          "elements": []
+        },
+        "encart": {}
       },
-      {
-        "id": "direction-finances",
-        "nom": "Direction Finances",
-        "url": "",
-        "barre": true,
-        "liste": true
+      "negoce": {
+        "entete": {
+          "accroche": "Marchés, approvisionnements, agences de négoce",
+          "boutonTexte": "",
+          "boutonLien": "",
+          "liens": []
+        },
+        "raccourcis": {
+          "titre": "Raccourcis",
+          "elements": []
+        },
+        "une": {},
+        "liste": {
+          "titre": "",
+          "elements": []
+        },
+        "faq": {
+          "titre": "Questions fréquentes",
+          "elements": []
+        },
+        "calendrier": {
+          "titre": "Calendrier",
+          "elements": []
+        },
+        "documents": {
+          "titre": "Documents utiles",
+          "elements": []
+        },
+        "contacts": {
+          "titre": "Contacts",
+          "elements": []
+        },
+        "encart": {}
       },
-      {
-        "id": "stat-atr",
-        "nom": "Stat ATR",
-        "url": "",
-        "barre": true,
-        "liste": true
+      "achats-juridique": {
+        "entete": {
+          "accroche": "Fournisseurs, contrats, conformité",
+          "boutonTexte": "",
+          "boutonLien": "",
+          "liens": []
+        },
+        "raccourcis": {
+          "titre": "Raccourcis",
+          "elements": []
+        },
+        "une": {},
+        "liste": {
+          "titre": "",
+          "elements": []
+        },
+        "faq": {
+          "titre": "Questions fréquentes",
+          "elements": []
+        },
+        "calendrier": {
+          "titre": "Calendrier",
+          "elements": []
+        },
+        "documents": {
+          "titre": "Documents utiles",
+          "elements": []
+        },
+        "contacts": {
+          "titre": "Contacts",
+          "elements": []
+        },
+        "encart": {}
       },
-      {
-        "id": "adv-commerciale",
-        "nom": "ADV Commerciale",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "logistique",
-        "nom": "Logistique",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "marches-publics",
-        "nom": "Marches Publics",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "60-ans-dyneff",
-        "nom": "60 Ans Dyneff",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "activite-gaz-elec",
-        "nom": "Activité Gaz - Elec",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "asd",
-        "nom": "ASD",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "audits",
-        "nom": "Audits",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "bio-ae",
-        "nom": "Bio-AE",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "boite-a-idees",
-        "nom": "Boite à Idées",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "cee",
-        "nom": "CEE",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "credit-client",
-        "nom": "Crédit client",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "detail",
-        "nom": "Détail",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "ged-hsse-tech",
-        "nom": "GED HSSE-TECH",
-        "url": "",
-        "barre": true,
-        "liste": true
-      },
-      {
-        "id": "gestion-de-projet",
-        "nom": "Gestion de projet",
-        "url": "",
-        "barre": false,
-        "liste": true
+      "cse": {
+        "entete": {
+          "accroche": "Activités sociales, billetterie et comptes-rendus du CSE.",
+          "boutonTexte": "",
+          "boutonLien": "",
+          "liens": [
+            {
+              "texte": "Activités sociales",
+              "lien": ""
+            },
+            {
+              "texte": "Billetterie",
+              "lien": ""
+            },
+            {
+              "texte": "Comptes-rendus",
+              "lien": ""
+            },
+            {
+              "texte": "Contacts élus",
+              "lien": ""
+            }
+          ]
+        },
+        "raccourcis": {
+          "titre": "Raccourcis",
+          "elements": []
+        },
+        "une": {},
+        "liste": {
+          "titre": "",
+          "elements": []
+        },
+        "faq": {
+          "titre": "Questions fréquentes",
+          "elements": []
+        },
+        "calendrier": {
+          "titre": "Calendrier",
+          "elements": []
+        },
+        "documents": {
+          "titre": "Documents utiles",
+          "elements": []
+        },
+        "contacts": {
+          "titre": "Contacts",
+          "elements": []
+        },
+        "encart": {}
       }
-    ],
-    "liens": [
-      {
-        "nom": "Share",
-        "url": ""
-      },
-      {
-        "nom": "Intranet Station",
-        "url": ""
-      }
-    ],
-    "annonces": [
-      {
-        "titre": "Retrouvez toutes les actualités",
-        "auteur": "DYNFR\\ddepinoy",
-        "texte": "",
-        "url": ""
-      }
-    ],
-    "annuaire": {
-      "url": "",
-      "parametre": "nom"
     }
   },
   "bibliotheque": {
